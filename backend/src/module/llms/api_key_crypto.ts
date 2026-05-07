@@ -12,7 +12,7 @@ function getKey(): Buffer {
   if (!secret) {
     throw new Error("LLM_KEY_ENCRYPTION_SECRET env var is required");
   }
-  cachedKey = scryptSync(secret, "fastpr-llm-key", 32);
+  cachedKey = scryptSync(secret, "dyff-llm-key", 32);
   return cachedKey;
 }
 

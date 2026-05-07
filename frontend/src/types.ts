@@ -93,7 +93,7 @@ export interface SerializedPullRequest {
   base_branch: string
   head_branch: string
   head_commit_sha: string
-  fastpr_status: 'skipped' | 'tracked'
+  dyff_status: 'skipped' | 'tracked'
   github_created_at: Date
   github_updated_at: Date
   github_merged_at: Date | null

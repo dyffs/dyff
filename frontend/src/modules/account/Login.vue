@@ -3,7 +3,7 @@
     <div class="w-full max-w-sm space-y-6 rounded-lg border bg-card p-8 shadow-sm">
       <div class="space-y-2 text-center">
         <h1 class="text-2xl font-semibold tracking-tight">
-          Welcome to FastPR
+          Welcome to Dyff
         </h1>
         <p class="text-sm text-muted-foreground">
           {{ selfHosted ? 'Sign in with your email to continue' : 'Sign in with your GitHub account to continue' }}

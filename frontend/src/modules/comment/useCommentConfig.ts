@@ -1,8 +1,8 @@
 import { createInjectionState } from '@vueuse/core'
 import { reactive, ref, watch, type Ref, toValue } from 'vue'
 
-const COLLAPSE_STORAGE_KEY = 'fastpr_comment_collapse_state'
-const BOT_COMMENTS_STORAGE_KEY = 'fastpr_show_bot_comments'
+const COLLAPSE_STORAGE_KEY = 'dyff_comment_collapse_state'
+const BOT_COMMENTS_STORAGE_KEY = 'dyff_show_bot_comments'
 
 const [useProvideCommentConfig, useCommentConfig] = createInjectionState((prIdRef: Ref<string | null>) => {
   const collapseState = reactive<Record<string, boolean>>({})

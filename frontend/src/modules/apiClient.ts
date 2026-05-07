@@ -19,7 +19,7 @@ const apiClient = axios.create({
 
 apiClient.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem('fastpr_app_auth')
+    const token = localStorage.getItem('dyff_app_auth')
     if (token) {
       config.headers.Authorization = `Bearer ${token}`
     }
@@ -34,7 +34,7 @@ apiClient.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response?.status === 401) {
-      localStorage.removeItem('fastpr_app_auth')
+      localStorage.removeItem('dyff_app_auth')
       window.location.href = '/login'
     }
     return Promise.reject(error.response)

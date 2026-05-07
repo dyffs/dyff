@@ -54,13 +54,13 @@ describe("MessagePipeline.parse", () => {
   });
 
   it("parses links", () => {
-    const segments = pipeline.parse("visit https://fastpr.com/comments/123");
+    const segments = pipeline.parse("visit https://dyff.sh/comments/123");
     expect(segments).toEqual([
       { kind: "text", value: "visit " },
       {
         kind: "reference",
-        value: "https://fastpr.com/comments/123",
-        ref: { type: "link", url: "https://fastpr.com/comments/123" },
+        value: "https://dyff.sh/comments/123",
+        ref: { type: "link", url: "https://dyff.sh/comments/123" },
       },
     ]);
   });
@@ -89,7 +89,7 @@ describe("MessagePipeline.parse", () => {
 
   it("parses multiple mixed references", () => {
     const raw =
-      "@__FAST__PR__SYSTEM_PROMPT review @commit_1a2b3c4 in @src/index.ts see https://fastpr.com/pr/1";
+      "@__FAST__PR__SYSTEM_PROMPT review @commit_1a2b3c4 in @src/index.ts see https://dyff.sh/pr/1";
     const segments = pipeline.parse(raw);
     const types = segments
       .filter((s) => s.kind === "reference")

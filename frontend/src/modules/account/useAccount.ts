@@ -5,7 +5,7 @@ import type { AccountState } from './types'
 
 import apiClient from '@/modules/apiClient'
 
-const TOKEN_KEY = 'fastpr_app_auth'
+const TOKEN_KEY = 'dyff_app_auth'
 
 const [useProvideAccount, useAccount] = createInjectionState(() => {
   const router = useRouter()

@@ -5,7 +5,7 @@ import { listRepos, listTrackedRepos, trackRepos, untrackRepo } from './repoApi'
 import { toast } from 'vue-sonner'
 import { useAccount } from '@/modules/account/useAccount'
 
-const CACHE_KEY = 'fastpr_available_repos'
+const CACHE_KEY = 'dyff_available_repos'
 const CACHE_DURATION = 5 * 60 * 1000 // 5 minutes in milliseconds
 
 interface CachedRepos {

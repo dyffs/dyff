@@ -36,7 +36,7 @@ import { Info, X } from 'lucide-vue-next'
 import { Button } from '@/components/ui/button'
 import { useGithubSetup } from './useGithubSetup'
 
-const DISMISS_KEY = 'fastpr_connect_user_pat_banner_dismissed'
+const DISMISS_KEY = 'dyff_connect_user_pat_banner_dismissed'
 
 const router = useRouter()
 const { showConnectUserBanner } = useGithubSetup()!

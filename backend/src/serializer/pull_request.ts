@@ -26,7 +26,7 @@ export interface SerializedPullRequest {
   base_branch: string
   head_branch: string
   head_commit_sha: string
-  fastpr_status: 'skipped' | 'tracked'
+  dyff_status: 'skipped' | 'tracked'
   github_created_at: Date
   github_updated_at: Date
   review_rounds: {
@@ -75,7 +75,7 @@ export async function serializePullRequest(
     base_branch: pullRequest.base_branch,
     head_branch: pullRequest.head_branch,
     head_commit_sha: pullRequest.head_commit_sha,
-    fastpr_status: pullRequest.fastpr_status,
+    dyff_status: pullRequest.dyff_status,
     github_created_at: pullRequest.github_created_at,
     github_updated_at: pullRequest.github_updated_at,
     review_rounds: pullRequest.review_rounds,

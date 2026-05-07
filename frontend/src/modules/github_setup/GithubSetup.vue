@@ -6,7 +6,7 @@
           GitHub Setup
         </h1>
         <p class="text-sm text-muted-foreground">
-          Connect FastPR to GitHub so we can fetch repositories and pull requests.
+          Connect Dyff to GitHub so we can fetch repositories and pull requests.
         </p>
       </div>
 

@@ -9,7 +9,7 @@ const connection = {
   port: Number(process.env.REDIS_PORT) || 6379,
 }
 
-export const queue = new Queue('fastpr-jobs', { connection })
+export const queue = new Queue('dyff-jobs', { connection })
 
 async function processJob(bullJob: any) {
   const { jobId } = bullJob.data
@@ -70,7 +70,7 @@ async function onJobFinished(teamId: string) {
 }
 
 export function initWorker() {
-  const worker = new Worker('fastpr-jobs', processJob, {
+  const worker = new Worker('dyff-jobs', processJob, {
     connection,
     concurrency: WORKER_CONCURRENCY,
   })

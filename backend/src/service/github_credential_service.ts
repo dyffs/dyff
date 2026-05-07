@@ -37,7 +37,7 @@ export async function getReadCredential(user: User): Promise<GithubCredential> {
     }
 
     throw new CredentialNotFoundError(
-      'No GitHub App installation for this team. Install the FastPR GitHub App to continue.'
+      'No GitHub App installation for this team. Install the Dyff GitHub App to continue.'
     )
   }
 

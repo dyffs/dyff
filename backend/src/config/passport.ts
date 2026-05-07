@@ -24,7 +24,7 @@ async function fetchGitHubEmail(accessToken: string): Promise<string | null> {
       headers: {
         'Authorization': `Bearer ${accessToken}`,
         'Accept': 'application/vnd.github.v3+json',
-        'User-Agent': 'FastPR-Backend',
+        'User-Agent': 'Dyff-Backend',
       },
     })
 

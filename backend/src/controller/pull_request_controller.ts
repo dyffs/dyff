@@ -333,17 +333,17 @@ router.get('/:owner/:repo', async (req: Request, res: Response) => {
       }
 
       if (!existingPR) {
-        // Create new PR with default FastPR-specific fields
+        // Create new PR with default Dyff-specific fields
         await PullRequest.create({
           ...githubFields,
-          fastpr_status: 'tracked', // Default status for new PRs
+          dyff_status: 'tracked', // Default status for new PRs
           review_rounds: { reviews: [] },
           timeline: { events: [] },
           up_to_date: false, // Mark as not up to date since we need to fetch details
         })
       } else {
         // Update existing PR - only update GitHub-sourced fields and up_to_date flag
-        // Preserve FastPR-specific fields (fastpr_status, review_rounds, timeline)
+        // Preserve Dyff-specific fields (dyff_status, review_rounds, timeline)
         await existingPR.update({
           ...githubFields,
           up_to_date: false, // Mark as not up to date since we need to fetch details

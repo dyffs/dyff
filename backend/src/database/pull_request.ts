@@ -115,7 +115,7 @@ export default class PullRequest extends Model {
   @Column({
     type: DataType.TEXT,
   })
-  declare fastpr_status: 'skipped' | 'tracked'
+  declare dyff_status: 'skipped' | 'tracked'
 
   @AllowNull(false)
   @Column({

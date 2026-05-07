@@ -4,7 +4,7 @@
       <SidebarMenu>
         <SidebarMenuItem>
           <SidebarMenuButton>
-            <ShowerHead /><span>FastPR</span>
+            <ShowerHead /><span>Dyff</span>
           </SidebarMenuButton>
         </SidebarMenuItem>
       </SidebarMenu>

@@ -1,7 +1,7 @@
-# FastPR - Git Diff Review App
+# Dyff - Git Diff Review App
 
 ## Overview
-FastPR aggregates comments from multiple sources (GitHub, Slack, in-app), provides code search and navigation
+Dyff aggregates comments from multiple sources (GitHub, Slack, in-app), provides code search and navigation
 AI overview and chat with AI agent on the PR
 
 ## Key Features (Planned)

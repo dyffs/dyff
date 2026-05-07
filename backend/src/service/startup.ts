@@ -21,7 +21,7 @@ async function isSchemaEmpty(): Promise<boolean> {
 }
 
 async function seedFirstAdmin(): Promise<void> {
-  const email = process.env.SELF_HOST_ADMIN_EMAIL || 'admin@fastpr.local'
+  const email = process.env.SELF_HOST_ADMIN_EMAIL || 'admin@dyff.local'
   const password = process.env.SELF_HOST_ADMIN_PASSWORD || '12345'
 
   const existing = await User.findOne({ where: { email } })

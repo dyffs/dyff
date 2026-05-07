@@ -6,7 +6,7 @@
 export type ContextReference =
   | { type: "file"; path: string }
   | { type: "commit"; hash: string }
-  | { type: "link"; url: string } // link to our app e.g. https://fastpr.com/comments/1234567890
+  | { type: "link"; url: string } // link to our app e.g. https://dyff.sh/comments/1234567890
   | { type: "system_prompt"; name: string };
 
 /** The parsed form of a raw message — text interleaved with references */

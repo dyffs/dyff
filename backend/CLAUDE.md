@@ -1,9 +1,9 @@
-# FastPR Backend
+# Dyff Backend
 
 Enhanced PR review tool with advanced collaboration features beyond standard GitHub PRs.
 
 ## Overview
-FastPR aggregates comments from multiple sources (GitHub, Slack, in-app), provides code search and navigation, and offers Trello-style PR management boards. Supports both personal (PAT) and organizational (GitHub App) workflows.
+Dyff aggregates comments from multiple sources (GitHub, Slack, in-app), provides code search and navigation, and offers Trello-style PR management boards. Supports both personal (PAT) and organizational (GitHub App) workflows.
 
 ## Key Features
 - **Multi-source commenting:** Aggregate comments from GitHub, Slack, and in-app
@@ -54,9 +54,9 @@ docs/
 - **users** - Users with team association (supports unregistered users)
 - **repositories** - Tracked GitHub repositories with local storage paths
 - **repository_trackings** - Permission cache (user/team → repository)
-- **pull_requests** - PR metadata with github_status, fastpr_status, up_to_date flag, and JSONB columns:
+- **pull_requests** - PR metadata with github_status, dyff_status, up_to_date flag, and JSONB columns:
 - **pull_request_diffs** - Cached diffs keyed by commit SHA
-- **comment_threads** - Grouped comments with source tracking (fastpr/github/slack)
+- **comment_threads** - Grouped comments with source tracking (dyff/github/slack)
 - **comments** - Individual comments with code anchors and source IDs
 - **github_credentials** - GitHub PAT or App credentials (owner_type: user/org/pat)
 - **file_reviews** - File-level review status tracking

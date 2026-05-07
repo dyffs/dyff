@@ -5,7 +5,7 @@
 
 ## PR activities
 - PR status: approved vs merged, skipped
-  - skipped is our internal status fastpr_status
+  - skipped is our internal status dyff_status
 
 - Reviewer comments and approval status
   - A PR can have multiple Reviews, each Review can have multiple Comments
@@ -54,7 +54,7 @@ However, if there are Slack comments from team B on the PR, the comments should 
 from user Y. That's why the team_id is not required for Github comments.
 
 ## User-Team structure
-Each fastpr user can only be in one team. We auto create users from Github activity and assign them to the internal team.
+Each dyff user can only be in one team. We auto create users from Github activity and assign them to the internal team.
 What happens when an user registers and claims a username?
 - Case 1: the user joins as a personal account, in this case, a new team will be created for that user.
   They follow our repo permission and the github comments from a PR is shown normally

@@ -288,7 +288,7 @@ import GithubAvatar from '@/components/custom/GithubAvatar.vue'
 import Confirm from '@/components/custom/Confirm.vue'
 import type { SerializedRepository } from '@/types'
 
-const SKIP_ORG_CONFIRM_KEY = 'fastpr_skip_org_connect_confirm'
+const SKIP_ORG_CONFIRM_KEY = 'dyff_skip_org_connect_confirm'
 
 const repoStore = useRepo()
 if (!repoStore) {

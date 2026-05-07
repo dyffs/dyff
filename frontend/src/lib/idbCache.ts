@@ -1,6 +1,6 @@
 import { openDB, type IDBPDatabase } from 'idb'
 
-const DB_NAME = 'fastpr-cache'
+const DB_NAME = 'dyff-cache'
 const DB_VERSION = 1
 
 interface CacheEntry<T> {
