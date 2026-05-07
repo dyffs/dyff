@@ -1,0 +1,79 @@
+<template>
+  <div class="">
+    <CodeComment
+      v-for="(comment, index) in thread.comments"
+      ref="codeCommentRefs"
+      :key="comment.id"
+      :comment="comment"
+      :is-thread="index > 0"
+      :thread-id="threadId"
+      :always-expanded="alwaysExpanded"
+      :show-diff-hunk="showDiffHunk"
+      :show-thread-header="showThreadHeader"
+      @select-file="$emit('select-file', $event)"
+    />
+    <CommentInput
+      v-show="!isCollapsed"
+      ref="commentInputRef"
+      :username="currentUsername"
+      :loading="isReplying"
+      mode="reply-only"
+      @reply="handleReply"
+    />
+  </div>
+</template>
+
+<script setup lang="ts">
+import CodeComment from './CodeComment.vue'
+import CommentInput from './CommentInput.vue'
+import type { CommentThread } from './useComments'
+import { useComments } from './useComments'
+import type { DiffNavigateEvent } from '@/types'
+import { ref, useTemplateRef, computed } from 'vue'
+import { useCommentConfig } from './useCommentConfig'
+import { usePullRequest } from '../pull_request/usePullRequest'
+
+interface Props {
+  thread: CommentThread
+  threadId: string
+  alwaysExpanded?: boolean
+  showDiffHunk?: boolean
+  showThreadHeader?: boolean
+  generateCommentId?: boolean
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  alwaysExpanded: false,
+  showDiffHunk: true,
+  generateCommentId: false,
+  showThreadHeader: true,
+})
+
+const prState = usePullRequest()!
+const { currentUsername } = prState
+
+const config = useCommentConfig()!
+const _commentsState = useComments()
+
+const { isCollapsed: checkCollapsed } = config
+
+const isCollapsed = computed(() => props.alwaysExpanded ? false : checkCollapsed(props.threadId))
+
+const isReplying = ref(false)
+const _commentInputRef = useTemplateRef<InstanceType<typeof CommentInput>>('commentInputRef')
+
+async function handleReply (content: string) {
+  // TODO: implement
+  console.log('handleReply', content)
+}
+
+defineEmits<{
+  'select-file': [event: DiffNavigateEvent]
+}>()
+
+const codeCommentRefs = useTemplateRef<InstanceType<typeof CodeComment>[]>('codeCommentRefs')
+
+defineExpose({
+  codeCommentRefs,
+})
+</script>

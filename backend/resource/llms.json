@@ -1,0 +1,168 @@
+{
+  "coreProviders": [
+    {
+      "providerName": "openai",
+      "displayName": "OpenAI",
+      "docsLink": "https://ai-sdk.dev/providers/ai-sdk-providers/openai",
+      "modelsDocsLink": "https://platform.openai.com/docs/models",
+      "models": [
+        { "name": "GPT-5.5", "code": "gpt-5.5" },
+        { "name": "GPT-5.4", "code": "gpt-5.4" },
+        { "name": "GPT-5.4 Mini", "code": "gpt-5.4-mini" }
+      ]
+    },
+    {
+      "providerName": "anthropic",
+      "displayName": "Anthropic",
+      "docsLink": "https://ai-sdk.dev/providers/ai-sdk-providers/anthropic",
+      "modelsDocsLink": "https://docs.claude.com/en/docs/about-claude/models/overview",
+      "models": [
+        { "name": "Claude Opus 4.7", "code": "claude-opus-4-7" },
+        { "name": "Claude Opus 4.6", "code": "claude-opus-4-6" },
+        { "name": "Claude Sonnet 4.6", "code": "claude-sonnet-4-6" },
+        { "name": "Claude Haiku 4.5", "code": "claude-haiku-4-5" }
+      ]
+    },
+    {
+      "providerName": "google",
+      "displayName": "Google (Gemini)",
+      "docsLink": "https://ai-sdk.dev/providers/ai-sdk-providers/google-generative-ai",
+      "modelsDocsLink": "https://ai.google.dev/gemini-api/docs/models",
+      "models": [
+        { "name": "Gemini 3.1 Pro", "code": "gemini-3.1-pro-preview" },
+        { "name": "Gemini 3.1 Flash", "code": "gemini-3-flash-preview" },
+        { "name": "Gemini 3.1 Flash Lite", "code": "gemini-3.1-flash-lite-preview" }
+      ]
+    },
+    {
+      "providerName": "xai",
+      "displayName": "xAI",
+      "docsLink": "https://ai-sdk.dev/providers/ai-sdk-providers/xai",
+      "modelsDocsLink": "https://docs.x.ai/docs/models",
+      "models": [
+        { "name": "Grok 4.3", "code": "grok-4.3" },
+        { "name": "Grok 4.2", "code": "grok-4.2" },
+        { "name": "Grok 4 Fast Reasoning", "code": "grok-4-1-fast-reasoning" },
+        { "name": "Grok 4 Fast Non-Reasoning", "code": "grok-4-1-fast-non-reasoning" }
+      ]
+    }
+  ],
+  "openAICompatibleProviders": [
+    {
+      "providerName": "openrouter",
+      "displayName": "OpenRouter",
+      "baseURL": "https://openrouter.ai/api/v1",
+      "docsLink": "https://openrouter.ai/docs",
+      "modelsDocsLink": "https://openrouter.ai/models",
+      "models": [
+        {
+          "name": "Kimi K2.6",
+          "code": "moonshotai/kimi-k2.6"
+        },
+        {
+          "name": "DeepSeek V4 Pro",
+          "code": "deepseek/deepseek-v4-pro"
+        },
+        {
+          "name": "DeepSeek V4 Flash",
+          "code": "deepseek/deepseek-v4-flash"
+        }
+      ]
+    },
+    {
+      "providerName": "vercel",
+      "displayName": "Vercel AI Gateway",
+      "baseURL": "https://ai-gateway.vercel.sh/v1",
+      "docsLink": "https://vercel.com/docs/ai-gateway/sdks-and-apis/openai-chat-completions",
+      "modelsDocsLink": "https://vercel.com/ai-gateway/models",
+      "models": [
+        { "name": "Qwen 3.6 Max", "code": "alibaba/qwen-3.6-max-preview" },
+        { "name": "Kimi K2.6", "code": "moonshotai/kimi-k2.6" },
+        { "name": "GPT-5.5 Pro", "code": "openai/gpt-5.5-pro" },
+        { "name": "GLM 5.1", "code": "zai/glm-5.1" }
+      ]
+    },
+    {
+      "providerName": "togetherai",
+      "displayName": "Together AI",
+      "baseURL": "https://api.together.xyz/v1",
+      "docsLink": "https://docs.together.ai/docs/openai-api-compatibility",
+      "modelsDocsLink": "https://docs.together.ai/docs/serverless-models",
+      "models": [
+        { "name": "MiniMax M2.7", "code": "MiniMaxAI/MiniMax-M2.7" },
+        { "name": "Qwen 3.6 Plus", "code": "Qwen/Qwen3.6-Plus" },
+        { "name": "Kimi K2.6", "code": "moonshotai/Kimi-K2.6" },
+        { "name": "GLM 5.1", "code": "zai-org/GLM-5.1" }
+      ]
+    },
+    {
+      "providerName": "fireworks",
+      "displayName": "Fireworks AI",
+      "baseURL": "https://api.fireworks.ai/inference/v1",
+      "docsLink": "https://docs.fireworks.ai/guides/querying-text-models#python-openai-sdk",
+      "modelsDocsLink": "https://fireworks.ai/models",
+      "notes": "The model code always starts with `accounts/fireworks/models/`",
+      "models": [
+        { "name": "GLM 5.1", "code": "accounts/fireworks/models/glm-5p1" },
+        { "name": "DeepSeek V4 Pro", "code": "accounts/fireworks/models/deepseek-v4-pro" },
+        { "name": "Kimi K2.6", "code": "accounts/fireworks/models/kimi-k2p6" },
+        { "name": "MiniMax M2.7", "code": "accounts/fireworks/models/minimax-m2p7" },
+        { "name": "Qwen 3.6 Plus", "code": "accounts/fireworks/models/qwen3p6-plus" }
+      ]
+    },
+    {
+      "providerName": "baseten",
+      "displayName": "Baseten",
+      "baseURL": "https://inference.baseten.co/v1",
+      "docsLink": "https://docs.baseten.co/quickstart",
+      "modelsDocsLink": "https://www.baseten.co/library/",
+      "models": [
+        { "name": "Kimi K2.6", "code": "moonshotai/Kimi-K2.6" },
+        { "name": "DeepSeek V4 Pro", "code": "deepseek-ai/DeepSeek-V4-Pro" },
+        { "name": "GLM 5.1", "code": "zai-org/GLM-5" }
+      ]
+    },
+    {
+      "providerName": "deepseek",
+      "displayName": "DeepSeek",
+      "baseURL": "https://api.deepseek.com",
+      "docsLink": "https://api-docs.deepseek.com/",
+      "modelsDocsLink": "https://api-docs.deepseek.com/quick_start/pricing",
+      "models": [
+        { "name": "DeepSeek V4 Flash", "code": "deepseek-v4-flash" },
+        { "name": "DeepSeek V4 Pro", "code": "deepseek-v4-pro" }
+      ]
+    },
+    {
+      "providerName": "moonshot",
+      "displayName": "Moonshot (Kimi)",
+      "baseURL": "https://api.moonshot.ai/v1",
+      "docsLink": "https://platform.kimi.ai/docs/guide/kimi-k2-6-quickstart",
+      "modelsDocsLink": "https://platform.moonshot.ai/docs/pricing/chat",
+      "models": [
+        { "name": "Kimi K2.6", "code": "kimi-k2.6" }
+      ]
+    },
+    {
+      "providerName": "zai",
+      "displayName": "Z.AI",
+      "baseURL": "https://api.z.ai/api/paas/v4",
+      "docsLink": "https://docs.z.ai/guides/overview/quick-start",
+      "modelsDocsLink": "https://docs.z.ai/guides/llm/glm-5.1",
+      "models": [
+        { "name": "GLM 5.1", "code": "glm-5.1" }
+      ]
+    },
+    {
+      "providerName": "minimax",
+      "displayName": "MiniMax",
+      "baseURL": "https://api.minimax.io/v1",
+      "docsLink": "https://platform.minimax.io/docs/api-reference/text-openai-api",
+      "modelsDocsLink": "https://platform.minimax.io/docs/guides/text-generation",
+      "models": [
+        { "name": "MiniMax M2.7", "code": "MiniMax-M2.7" },
+        { "name": "MiniMax M2.5", "code": "MiniMax-M2.5" }
+      ]
+    }
+  ]
+}
