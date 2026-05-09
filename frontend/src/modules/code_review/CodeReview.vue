@@ -194,7 +194,6 @@ import { highlightLine } from '@/utils/syntaxHighlighter'
 import { useProvideCodeSearch, useCodeSearch } from '@/modules/search/useCodeSearch'
 import { useProvideCodeReview } from '@/modules/code_review/useCodeReview'
 import { useProvideCommentConfig } from '@/modules/comment/useCommentConfig'
-import { useProvideComments } from '@/modules/comment/useComments'
 import { useProvideCodeBookmark } from '@/modules/bookmark/useCodeBookmark'
 import { useProvideDiffNavigate } from '@/modules/code_review/useDiffNavigate'
 import { useProvideVirtualDiffScroller } from '@/modules/code_review/diff/useVirtualDiffScroller'
@@ -244,7 +243,6 @@ const floatingSearchRef = ref<InstanceType<typeof FloatingSearch> | null>(null)
 const prId = computed(() => pr.value?.id ?? null)
 
 useProvideCommentConfig(prId)
-const { threadMetaMap } = useProvideComments(pr)
 
 useProvideAIOverview(pr)
 useProvideChat(pr)

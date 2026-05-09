@@ -29,13 +29,11 @@ import { onClickOutside } from '@vueuse/core'
 
 import CommentInput from '@/modules/comment/CommentInput.vue'
 import { useContextMenu } from './useContextMenu'
-import { useComments } from '@/modules/comment/useComments'
 import { usePullRequest } from '@/modules/pull_request/usePullRequest'
 
 const contextMenu = useContextMenu()!
 const { isCommentOpen, commentAnchorElement, commentContextData, closeComment } = contextMenu
 
-const _commentsState = useComments()!
 const { currentUsername } = usePullRequest()!
 
 const popupRef = ref<HTMLElement | null>(null)

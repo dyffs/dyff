@@ -75,12 +75,12 @@ import { computed } from 'vue'
 import { getTimeAgo } from '@/lib/utils'
 import GithubAvatar from '@/components/custom/GithubAvatar.vue'
 import { ChevronDown, ChevronRight } from 'lucide-vue-next'
-import { useComments } from './useComments'
+import { useCommentSystem } from './useCommentSystem'
 
 // TODO: this should be responsive
 const LIMIT_FILE_PATH_LENGTH = 50
 
-const { threadMetaMap } = useComments()!
+const { threadMetaMap } = useCommentSystem()!
 
 const emit = defineEmits<{
   (e: 'select-file', event: DiffNavigateEvent): void

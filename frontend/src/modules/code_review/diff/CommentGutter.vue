@@ -52,11 +52,11 @@
 <script setup lang="ts">
 import GithubAvatar from '@/components/custom/GithubAvatar.vue'
 import type { AppComment, DiffNavigateEvent } from '@/types'
-import type { CommentThread as ICommentThread } from '@/modules/comment/useComments'
-import { useComments } from '@/modules/comment/useComments'
+import type { CommentThread as ICommentThread } from '@/modules/comment/types'
 import CommentThread from '@/modules/comment/CommentThread.vue'
 import { ref, computed, watch, nextTick, onMounted, onBeforeUnmount, type CSSProperties } from 'vue'
 import { computePosition, autoUpdate, offset, flip, shift } from '@floating-ui/dom'
+import { useCommentSystem } from '@/modules/comment/useCommentSystem'
 
 interface LineThread {
   thread: ICommentThread
@@ -79,7 +79,7 @@ defineEmits<{
 const MAX_AVATARS = 2
 
 // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-const { threadMetaMap } = useComments()!
+const { threadMetaMap } = useCommentSystem()!
 
 const allParticipants = computed(() => {
   const seen = new Set<string>()

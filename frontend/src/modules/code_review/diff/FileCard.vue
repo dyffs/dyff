@@ -98,7 +98,7 @@ import InlineMode from './InlineMode.vue'
 import SplitMode from './SplitMode.vue'
 
 import type { FileDiff, AppComment, DiffNavigateEvent } from '@/types'
-import type { CommentThread } from '@/modules/comment/useComments'
+import type { CommentThread } from '@/modules/comment/types'
 import { useCodeSearch } from '@/modules/search/useCodeSearch'
 import { useVirtualDiffScroller } from './useVirtualDiffScroller'
 

@@ -26,8 +26,7 @@
 <script setup lang="ts">
 import CodeComment from './CodeComment.vue'
 import CommentInput from './CommentInput.vue'
-import type { CommentThread } from './useComments'
-import { useComments } from './useComments'
+import type { CommentThread } from './types'
 import type { DiffNavigateEvent } from '@/types'
 import { ref, useTemplateRef, computed } from 'vue'
 import { useCommentConfig } from './useCommentConfig'
@@ -53,14 +52,12 @@ const prState = usePullRequest()!
 const { currentUsername } = prState
 
 const config = useCommentConfig()!
-const _commentsState = useComments()
 
 const { isCollapsed: checkCollapsed } = config
 
 const isCollapsed = computed(() => props.alwaysExpanded ? false : checkCollapsed(props.threadId))
 
 const isReplying = ref(false)
-const _commentInputRef = useTemplateRef<InstanceType<typeof CommentInput>>('commentInputRef')
 
 async function handleReply (content: string) {
   // TODO: implement

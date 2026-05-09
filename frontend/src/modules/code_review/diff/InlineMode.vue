@@ -85,7 +85,7 @@
 
 <script setup lang="ts">
 import type { FileDiff, DiffLine, AppComment, DiffNavigateEvent } from '@/types'
-import type { CommentThread } from '@/modules/comment/useComments'
+import type { CommentThread } from '@/modules/comment/types'
 import CommentGutter from './CommentGutter.vue'
 import { SquarePlus } from 'lucide-vue-next'
 import { useContextMenu, type DiffContextMenuData } from '../diff_menu/useContextMenu'

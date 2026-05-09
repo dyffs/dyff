@@ -48,11 +48,11 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch } from 'vue'
+import { ref, watch, type Ref } from 'vue'
 
 import { Spinner } from '@/components/ui/spinner'
 
-import { useComments, type CommentThread } from '@/modules/comment/useComments'
+import { type CommentThread } from '@/modules/comment/types'
 
 import FileCard from './diff/FileCard.vue'
 
@@ -64,6 +64,7 @@ import DiffCommentPopup from './diff_menu/DiffCommentPopup.vue'
 import { useProvideDiffTextSelection } from './diff_menu/useDiffTextSelection'
 import DiffTextContextMenu from './diff_menu/DiffTextContextMenu.vue'
 import { useVirtualDiffScroller } from './diff/useVirtualDiffScroller'
+import { useCommentSystem } from '@/modules/comment/useCommentSystem'
 
 useProvideContextMenu()
 const textSelection = useProvideDiffTextSelection()
@@ -122,7 +123,7 @@ defineEmits<{
   'select-file': [event: DiffNavigateEvent]
 }>()
 
-const { threads } = useComments()!
+const { threadMap } = useCommentSystem()!
 
 interface LineThread {
   thread: CommentThread
@@ -135,20 +136,22 @@ interface LineThread {
 const threadsByLine = computed(() => {
   const map = new Map<string, LineThread[]>()
 
-  if (!threads.value) return map
+  if (!threadMap.value) return map
 
-  for (const thread of threads.value) {
-    const rootComment = thread.comments[0]
+  const threads = Object.values(threadMap.value)
+
+  for (const threadRef of threads) {
+    const rootComment = threadRef.value.comments[0]
     if (!rootComment?.code_anchor) continue  // Skip general PR comments
 
     const anchor = rootComment.code_anchor
     const key = `${anchor.file_path}:${anchor.end_side}:${anchor.line_end}`
 
     const lineThread: LineThread = {
-      thread,
-      threadId: thread.id,
+      thread: threadRef.value,
+      threadId: threadRef.value.id,
       rootComment,
-      replyCount: thread.comments.length - 1
+      replyCount: threadRef.value.comments.length - 1
     }
 
     const existing = map.get(key)
