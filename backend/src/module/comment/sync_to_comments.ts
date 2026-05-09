@@ -81,7 +81,7 @@ export async function syncGithubCommentsToComments(options: SyncToCommentsOption
             content: commentContent,
             code_anchor: sync.code_anchor,
             attachments: sync.attachments,
-            updated_at: sync.remote_updated_at,
+            updated_at: sync.github_updated_at ?? new Date(),
           })
           updated++
         }
@@ -97,7 +97,8 @@ export async function syncGithubCommentsToComments(options: SyncToCommentsOption
           content: commentContent,
           attachments: sync.attachments,
           code_anchor: sync.code_anchor,
-          updated_at: sync.remote_updated_at,
+          created_at: sync.github_created_at ?? new Date(),
+          updated_at: sync.github_updated_at ?? new Date(),
         })
 
         await sync.update({ comment_id: comment.id })

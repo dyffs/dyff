@@ -21,6 +21,11 @@ export async function getPullRequestReviewComments(
     limit?: number
     per_page?: number
     delayMs?: number
+    // ISO 8601. When set, GitHub returns only comments updated at or after this time.
+    since?: string
+    // Defaults to 'updated' / 'asc' so paginating with `since` is stable.
+    sort?: 'created' | 'updated'
+    direction?: 'asc' | 'desc'
   } = {}
 ): Promise<GithubReviewComment[]> {
   const octokit = await createOctokitClient(credential)
@@ -29,6 +34,9 @@ export async function getPullRequestReviewComments(
     limit = 200,
     per_page = 50,
     delayMs = 500,
+    since,
+    sort = 'updated',
+    direction = 'asc',
   } = options
 
   const maxPages = Math.ceil(limit / per_page)
@@ -44,6 +52,9 @@ export async function getPullRequestReviewComments(
         pull_number,
         per_page,
         page,
+        sort,
+        direction,
+        ...(since && { since }),
       })
 
       if (response.data.length === 0) {
@@ -86,6 +97,8 @@ export async function getPullRequestIssueComments(
     limit?: number
     per_page?: number
     delayMs?: number
+    // ISO 8601. When set, GitHub returns only comments updated at or after this time.
+    since?: string
   } = {}
 ): Promise<GithubIssueComment[]> {
   const octokit = await createOctokitClient(credential)
@@ -94,6 +107,7 @@ export async function getPullRequestIssueComments(
     limit = 200,
     per_page = 50,
     delayMs = 500,
+    since,
   } = options
 
   const maxPages = Math.ceil(limit / per_page)
@@ -109,6 +123,7 @@ export async function getPullRequestIssueComments(
         issue_number,
         per_page,
         page,
+        ...(since && { since }),
       })
 
       if (response.data.length === 0) {

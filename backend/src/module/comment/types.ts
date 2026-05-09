@@ -55,6 +55,10 @@ export interface GithubCommentSync {
   github_comment_id: string
   github_thread_id: string | null
 
+  // Which GitHub endpoint produced this row. The two endpoints have
+  // different update streams, so watermarks must be tracked per-kind.
+  comment_kind: 'review_comment' | 'issue_comment'
+
   content: {
     body: string | null
     body_html: string | null
@@ -74,11 +78,14 @@ export interface GithubCommentSync {
   sync_direction: 'inbound' | 'outbound'
   sync_error: string | null
 
-  // If last_synced_at is behind remote_updated_at or comment.updated_at, we need to sync the comment.
-  last_synced_at: Date    
+  // If last_synced_at is behind github_updated_at or comment.updated_at, we need to sync the comment.
+  last_synced_at: Date
 
-  remote_updated_at: Date // Github: updated_at
+  // GitHub-side timestamps. Null on pending_push rows until pushed.
+  github_created_at: Date | null
+  github_updated_at: Date | null
 
+  // Local DB timestamps managed by Sequelize.
   created_at: Date
   updated_at: Date
 }

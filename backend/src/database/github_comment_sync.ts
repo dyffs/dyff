@@ -9,6 +9,11 @@ import User from "./user";
   timestamps: true,
   tableName: 'github_comment_syncs',
   underscored: true,
+  indexes: [
+    // Supports the per-(PR, kind) MAX(github_updated_at) watermark query
+    // used by fetch_github_comments to drive the GitHub `since` parameter.
+    { fields: ['pull_request_id', 'comment_kind', 'github_updated_at'] },
+  ],
 })
 export default class GithubCommentSyncModel extends Model {
   @PrimaryKey
@@ -43,6 +48,14 @@ export default class GithubCommentSyncModel extends Model {
   @Column({ type: DataType.TEXT })
   declare github_thread_id: string | null;
 
+  // Distinguishes which GitHub endpoint produced/should consume this row:
+  //   'review_comment' → /pulls/:n/comments  (inline diff comments)
+  //   'issue_comment'  → /issues/:n/comments (general PR comments)
+  // Required so the watermark used for `since` is computed per-endpoint.
+  @AllowNull(false)
+  @Column({ type: DataType.TEXT })
+  declare comment_kind: GithubCommentSync['comment_kind'];
+
   @AllowNull(false)
   @Column({ type: DataType.JSONB })
   declare content: GithubCommentSync['content'];
@@ -68,9 +81,14 @@ export default class GithubCommentSyncModel extends Model {
   @Column({ type: DataType.DATE })
   declare last_synced_at: Date;
 
-  @AllowNull(false)
+  // GitHub-side timestamps (distinct from Sequelize's created_at/updated_at,
+  // which track when the local sync row itself was written). Null for
+  // outbound (pending_push) rows that have not yet been pushed to GitHub.
   @Column({ type: DataType.DATE })
-  declare remote_updated_at: Date;
+  declare github_created_at: Date | null;
+
+  @Column({ type: DataType.DATE })
+  declare github_updated_at: Date | null;
 
   // FK to comments table — set after the sync record is written to comments
   @Column({ type: DataType.BIGINT })
