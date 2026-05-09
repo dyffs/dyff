@@ -63,8 +63,6 @@ app.use(express.urlencoded({
 }))
 logger.info(`Starting in deployment mode: ${getDeploymentMode()}`)
 
-app.use('/api/public', publicController)
-
 // Webhook route runs before auth middleware; it verifies via HMAC signature.
 if (isSaaS()) {
   app.use('/api/webhooks/github', githubAppWebhookRouter)

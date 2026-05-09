@@ -17,10 +17,15 @@ const [useProvidePullRequest, usePullRequest] = createInjectionState(() => {
 
   const updatingMap = new Map<string, Promise<SerializedPullRequest>>()
 
+  const fetchEpoch = ref(0)
+
   async function fetchPullRequests (owner: string, repo: string) {
+    const epoch = ++fetchEpoch.value
     isLoading.value = true
     try {
       const prs = await listPullRequests(owner, repo)
+
+      if (epoch !== fetchEpoch.value) return
 
       pullRequests.value = prs.sort((a, b) => {
         return new Date(b.github_updated_at).getTime() - new Date(a.github_updated_at).getTime()
@@ -29,10 +34,13 @@ const [useProvidePullRequest, usePullRequest] = createInjectionState(() => {
       currentOwner.value = owner
       currentRepo.value = repo
     } catch (error) {
+      if (epoch !== fetchEpoch.value) return
       console.error('Failed to fetch pull requests:', error)
       throw error
     } finally {
-      isLoading.value = false
+      if (epoch === fetchEpoch.value) {
+        isLoading.value = false
+      }
     }
   }
 
@@ -101,12 +109,8 @@ const [useProvidePullRequest, usePullRequest] = createInjectionState(() => {
   }
 
   async function init (owner: string, repo: string) {
-    if (isLoading.value) return
-
     try {
       await fetchPullRequests(owner, repo)
-
-      // updateOutdatedPullRequests()
     } catch (error) {
       console.error('Failed to init pull requests:', error)
       throw error

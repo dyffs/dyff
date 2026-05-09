@@ -100,7 +100,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, watch } from 'vue'
+import { ref, computed, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { Search } from 'lucide-vue-next'
 import PRRow from './PRRow.vue'
@@ -121,20 +121,24 @@ const search = ref('')
 const activeFilters = ref<Set<FilterKey>>(new Set(['open', 'no-draft']))
 const filterOptions: FilterKey[] = ['open', 'no-draft', 'merged']
 
-const owner = route.params.owner as string
-const repo = route.params.repo as string
+const owner = computed(() => route.params.owner as string)
+const repo = computed(() => route.params.repo as string)
 
 function preparePRs () {
   prs.value = pullRequests.value
-    .map(pr => transformPRData(pr, owner, repo))
+    .map(pr => transformPRData(pr, owner.value, repo.value))
     .sort((a, b) => b.updatedAtRaw.getTime() - a.updatedAtRaw.getTime())
 }
 
 watch([pullRequests], preparePRs)
 
-onMounted(async () => {
-  await init(owner, repo)
-})
+watch(
+  () => [route.params.owner, route.params.repo],
+  ([newOwner, newRepo]) => {
+    void init(newOwner as string, newRepo as string)
+  },
+  { immediate: true }
+)
 
 const { user } = useAccount()!
 

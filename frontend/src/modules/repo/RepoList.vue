@@ -225,11 +225,6 @@
               <p>
                 When you connect a repo, everyone on your team can <strong class="font-bold">READ</strong> it through this app: pull requests,
                 branches, and code.
-
-                <br>
-                <br>
-
-                The <strong class="font-bold">WRITE access</strong> e.g. posting a comment will <strong class="font-bold">NOT</strong> be shared.
               </p>
             </template>
           </DialogDescription>

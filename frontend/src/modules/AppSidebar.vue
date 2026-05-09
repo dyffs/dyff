@@ -18,6 +18,7 @@
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>
+        <TrackedReposSidebar />
         <SidebarMenu v-if="showGithubSetup">
           <SidebarMenuItem>
             <SidebarMenuButton @click="router.push('/llms')">
@@ -52,6 +53,7 @@ import { computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { ShowerHead, HardDrive, Settings, Factory, Users } from 'lucide-vue-next'
 import ColorMode from './ColorMode.vue'
+import TrackedReposSidebar from './repo/TrackedReposSidebar.vue'
 import {
   Sidebar,
   SidebarContent,
