@@ -21,7 +21,6 @@ import repositoryController from './controller/repository_controller'
 import pullRequestController from './controller/pull_request_controller'
 import fileReviewController from './controller/file_review_controller'
 import assetController from './controller/asset_controller'
-import reviewController from './controller/review_controller'
 import userController from './controller/user_controller'
 import chatSessionController from './controller/chat_session_controller'
 import commentController from './controller/comment_controller'
@@ -92,7 +91,6 @@ app.use('/api/repositories', repositoryController)
 app.use('/api/pull_requests', pullRequestController)
 app.use('/api/file_reviews', fileReviewController)
 app.use('/api/assets', assetController)
-app.use('/api/reviews', reviewController)
 app.use('/api/users', userController)
 app.use('/api/chat_sessions', chatSessionController)
 app.use('/api/comments', commentController)

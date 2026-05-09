@@ -7,9 +7,6 @@ import GithubCredential from "./github_credential";
 import PullRequest from "./pull_request";
 import PullRequestDiff from "./pull_request_diff";
 import FileReview from "./file_review";
-import GithubComment from "./github_comment";
-import DraftReview from "./draft_review";
-import DraftComment from "./draft_comment";
 import PGCache from "./pg_cache";
 import ChatSessionModel from "./chat_session";
 import CommentModel from "./comment";
@@ -36,9 +33,6 @@ const db = new Sequelize({
     PullRequest,
     PullRequestDiff,
     FileReview,
-    GithubComment,
-    DraftReview,
-    DraftComment,
     PGCache,
     ChatSessionModel,
     CommentModel,
