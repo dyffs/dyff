@@ -3,24 +3,24 @@
     <div
       v-if="isOpen"
       ref="menuRef"
-      class="w-[170px] shadow-md rounded-md p-2 bg-white border border-border z-50"
+      class="w-[150px] shadow-md rounded-md p-2 bg-white border border-border z-50"
       :style="menuStyle"
     >
       <!-- A simple context menu for demo -->
       <ul class="space-y-1">
         <li
           class="px-2 py-1 hover:bg-neutral-100 rounded cursor-pointer text-sm flex items-center gap-1"
-          @click="onAddBookmark"
-        >
-          <Bookmark class="size-4" />
-          <span>Add bookmark</span>
-        </li>
-        <li
-          class="px-2 py-1 hover:bg-neutral-100 rounded cursor-pointer text-sm flex items-center gap-1"
           @click="onAddComment"
         >
           <MessageCircle class="size-4" />
-          <span>Add comment</span>
+          <span>Comment</span>
+        </li>
+        <li
+          class="px-2 py-1 hover:bg-neutral-100 rounded cursor-pointer text-sm flex items-center gap-1"
+          @click="onAddBookmark"
+        >
+          <Bookmark class="size-4" />
+          <span>Bookmark</span>
         </li>
       </ul>
     </div>

@@ -23,19 +23,21 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch, useTemplateRef, nextTick, type CSSProperties } from 'vue'
+import { ref, watch, useTemplateRef, type CSSProperties } from 'vue'
 import { computePosition, offset, flip, shift } from '@floating-ui/dom'
 import { useAccount } from '@/modules/account/useAccount'
 import { onClickOutside } from '@vueuse/core'
-
+import { useCommentSystem } from '@/modules/comment/useCommentSystem'
 import CommentInput from '@/modules/comment/CommentInput.vue'
 import { useContextMenu } from './useContextMenu'
-import { usePullRequest } from '@/modules/pull_request/usePullRequest'
+import { toast } from 'vue-sonner'
+import { useCodeReview } from '../useCodeReview'
+import { isNil } from 'lodash-es'
 
-const contextMenu = useContextMenu()!
-const { isCommentOpen, commentAnchorElement, commentContextData, closeComment } = contextMenu
-
+const { isCommentOpen, commentAnchorElement, commentContextData, closeComment } = useContextMenu()!
 const { githubUsername } = useAccount()!
+const { addDiffComment } = useCommentSystem()!
+const { pr } = useCodeReview()!
 
 const popupRef = ref<HTMLElement | null>(null)
 const commentInputRef = useTemplateRef<InstanceType<typeof CommentInput>>('commentInputRef')
@@ -64,9 +66,9 @@ watch([isCommentOpen, commentAnchorElement], async () => {
       left: `${x}px`,
     }
 
-    nextTick(() => {
+    setTimeout(() => {
       commentInputRef.value?.focus()
-    })
+    }, 100)
   }
 }, { flush: 'post' })
 
@@ -79,7 +81,31 @@ onClickOutside(popupRef, () => {
 })
 
 async function handleComment (content: string) {
-  // TODO: implement
-  console.log('handleComment', content)
+  if (!commentContextData.value) return
+
+  isSubmitting.value = true
+  const side = isNil(commentContextData.value.oldLineStart) ? 'RIGHT' : 'LEFT'
+  const lineStart = side === 'RIGHT' ? commentContextData.value.newLineStart : commentContextData.value.oldLineStart
+  const lineEnd = side === 'RIGHT' ? commentContextData.value.newLineEnd : commentContextData.value.oldLineEnd
+
+  try {
+    await addDiffComment({
+      pull_request_id: pr.value?.id ?? '',
+      body: content,
+      code_anchor: {
+        side,
+        file_path: commentContextData.value.filePath,
+        commit_sha: pr.value?.head_commit_sha ?? '',
+        line_start: lineStart || 0,
+        line_end: lineEnd || 0,
+      }
+    })
+    closeComment()
+  } catch (error) {
+    toast.error('Add comment failed')
+    console.error('Add diff comment failed:', error)
+  } finally {
+    isSubmitting.value = false
+  }
 }
 </script>
