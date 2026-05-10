@@ -7,15 +7,14 @@
         v-model="textContent"
         placeholder="Write your comment here..."
         class="min-h-[18px] bg-white border-border rounded focus-visible:ring-0"
+        :disabled="isReplying"
       />
     </div>
-
-    
 
     <!-- Action Buttons -->
     <div class="flex justify-end items-center gap-2 pt-2">
       <Button
-        v-show="hasContent"
+        v-show="hasContent && !isReplying"
         variant="ghost"
         size="xs"
         @click="handleCancel"
@@ -75,6 +74,7 @@ import { onKeyStroke } from '@vueuse/core'
 
 interface Props {
   mode?: 'review' | 'reply-only' | 'diff'
+  isReplying?: boolean
   existingComment?: AppComment
   loading?: boolean
 }
@@ -83,6 +83,7 @@ const props = withDefaults(defineProps<Props>(), {
   mode: 'review',
   loading: false,
   existingComment: undefined,
+  isReplying: false,
 })
 
 const emit = defineEmits<{

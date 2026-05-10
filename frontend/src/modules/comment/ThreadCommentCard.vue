@@ -48,7 +48,7 @@
         v-if="replies.length > 0"
         class="mt-3 flex items-center gap-2 text-xs group hover:bg-neutral-50
         -mx-2 px-2 py-1 rounded w-full text-left cursor-pointer"
-        @click="$emit('open-thread')"
+        @click="$emit('open-thread', $event)"
       >
         <div class="flex -space-x-1">
           <UnifiedAvatar
@@ -105,7 +105,7 @@ const props = withDefaults(defineProps<Props>(), {
 const refProps = toRefs(props)
 
 const emit = defineEmits<{
-  'open-thread': []
+  'open-thread': [event: MouseEvent]
   'select-file': [event: DiffNavigateEvent]
 }>()
 

@@ -18,7 +18,7 @@
         v-if="!isThread && showDiffHunk"
         :max-lines="8"
         :diff-hunk="comment.content.diff_hunk"
-        class="mx-4 my-3 text-xs"
+        class="mx-3 mt-3 mb-4 text-xs"
       />
 
       <div class="mb-3 px-3">
