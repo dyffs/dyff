@@ -1,5 +1,5 @@
 <template>
-  <div class="mb-2 flex flex-col gap-2 overflow-y-auto">
+  <div class="mb-4 flex flex-col gap-2 overflow-y-auto">
     <div ref="scrollContainerRef" class="flex-1 overflow-y-auto">
       <CodeComment
         v-for="(comment, index) in thread.comments"

@@ -1,5 +1,5 @@
 <template>
-  <div class="px-2">
+  <div class="px-4">
     <!-- Header with Avatar -->
     <div class="flex gap-2 mb-1 items-start">
       <Textarea
@@ -13,15 +13,6 @@
 
     <!-- Action Buttons -->
     <div class="flex justify-end items-center gap-2 pt-2">
-      <Button
-        v-show="hasContent && !isReplying"
-        variant="ghost"
-        size="xs"
-        @click="handleCancel"
-      >
-        Cancel
-      </Button>
-
       <div>
         <Button
           size="xs"
@@ -30,7 +21,7 @@
         >
           <Spinner
             v-if="loading"
-            size="xs"
+            class="size-3"
           />
           <span v-else>
             Comment
@@ -67,7 +58,6 @@ const props = withDefaults(defineProps<Props>(), {
 })
 
 const emit = defineEmits<{
-  cancel: []
   startReview: [content: string]
   reply: [content: string]
   confirm: [content: string]
@@ -96,11 +86,6 @@ watch(
 // Action handlers
 const getEditorContent = (): string => {
   return textContent.value
-}
-
-const handleCancel = () => {
-  clear()
-  emit('cancel')
 }
 
 const handleReply = () => {
