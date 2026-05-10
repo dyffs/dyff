@@ -11,7 +11,7 @@
       <div
         v-if="isOpen"
         ref="popupRef"
-        class="w-[420px] max-h-[550px] overflow-y-auto shadow-lg
+        class="w-[520px] max-h-[550px] overflow-y-auto shadow-lg
         rounded-md bg-white border border-border z-50 flex flex-col gap-2"
         :style="popupStyle"
       >

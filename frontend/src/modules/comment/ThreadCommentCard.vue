@@ -43,29 +43,41 @@
         v-html="renderedHtml"
       />
 
-      <!-- N replies row -->
-      <button
-        v-if="replies.length > 0"
-        class="mt-3 flex items-center gap-2 text-xs group hover:bg-neutral-50
-        -mx-2 px-2 py-1 rounded w-full text-left cursor-pointer"
-        @click="$emit('open-thread', $event)"
-      >
-        <div class="flex -space-x-1">
-          <UnifiedAvatar
-            v-for="({ origin, name }, index) in replyParticipants"
-            :key="index"
-            :origin="origin"
-            :name="name"
-            class="h-4 w-4 ring-1 ring-white"
-          />
-        </div>
-        <span class="text-blue-600 group-hover:underline font-medium">
-          {{ replies.length }} {{ replies.length === 1 ? 'reply' : 'replies' }}
-        </span>
-        <span class="text-muted-foreground">
-          {{ lastReplyTime }}
-        </span>
-      </button>
+      <!--
+        The event from this element will be emitted to open the popup
+        Be careful not to hide this element e.g v-if that will break the popup position
+      -->
+      <div @click="$emit('open-thread', $event)">
+        <!-- N replies row -->
+        <button
+          v-if="replies.length > 0"
+          class="mt-3 flex items-center gap-2 text-xs group hover:bg-neutral-50
+        -mx-2 px-2 py-1 rounded w-full text-left cursor-pointer focus:outline-none"
+        >
+          <div class="flex -space-x-1">
+            <UnifiedAvatar
+              v-for="(name, index) in replyParticipants"
+              :key="index"
+              :name="name"
+              class="h-4 w-4 ring-1 ring-white"
+            />
+          </div>
+          <span class="text-blue-600 group-hover:underline font-medium">
+            {{ replies.length }} {{ replies.length === 1 ? 'reply' : 'replies' }}
+          </span>
+          <span class="text-muted-foreground">
+            {{ lastReplyTime }}
+          </span>
+        </button>
+        <button
+          v-else
+          class="mt-3 flex items-center gap-1 text-xs group hover:bg-neutral-50
+        -mx-2 px-2 py-1 rounded w-full text-left cursor-pointer hover:text-blue-600 focus:outline-none"
+        >
+          <Reply class="h-3 w-3" />
+          Add a reply
+        </button>
+      </div>
 
       <!-- Agent progress indicator -->
       <AgentProgressIndicator
@@ -78,8 +90,8 @@
 
 <script setup lang="ts">
 import type { CommentThread } from './types'
-import type { AppComment, DiffNavigateEvent } from '@/types'
-import { computed, toRefs, type ComputedRef } from 'vue'
+import type { DiffNavigateEvent } from '@/types'
+import { computed, toRefs, type ComputedRef, ref } from 'vue'
 import { getTimeAgo } from '@/lib/utils'
 import { useMarkdownRenderer } from '@/utils/markdownRendererGithub'
 import GithubAvatar from '@/components/custom/GithubAvatar.vue'
@@ -88,6 +100,7 @@ import UnifiedAvatar from '@/components/custom/UnifiedAvatar.vue'
 import AgentProgressIndicator from '../agent/AgentProgressIndicator.vue'
 import { MARKDOWN_STYLES_CLASS } from '../common/styles'
 import { useCommentSystem } from './useCommentSystem'
+import { Reply } from 'lucide-vue-next'
 
 const LIMIT_FILE_PATH_LENGTH = 50
 
@@ -148,20 +161,18 @@ function clickCommentHeader () {
 }
 const replies = computed(() => refProps.thread.value.comments.slice(1))
 
-const replyParticipants: ComputedRef<{
-  origin: AppComment['origin']
-  name: string
-}[]> = computed(() => {
+const replyParticipants: ComputedRef<string[]> = computed(() => {
   const seen = new Set<string>()
-  const result: { origin: AppComment['origin']; name: string }[] = []
+  const result = ref<string[]>([])
   for (const reply of replies.value) {
-    const name = reply.origin === 'human' ? reply.user_display_name : reply.agent_type
+    const name = reply.user_display_name
     if (name && !seen.has(name)) {
       seen.add(name)
-      result.push({ origin: reply.origin, name })
+      result.value.push(name)
     }
   }
-  return result.slice(0, 5).map(({ origin, name }) => ({ origin, name }))
+  console.log(result)
+  return result.value.slice(0, 5)
 })
 
 const lastReplyTime = computed(() => {

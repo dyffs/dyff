@@ -11,7 +11,7 @@
         :always-expanded="alwaysExpanded"
         :show-diff-hunk="showDiffHunk"
         :show-thread-header="showThreadHeader"
-        class="mb-3"
+        class="mb-5"
         @select-file="$emit('select-file', $event)"
       />
     </div>  
