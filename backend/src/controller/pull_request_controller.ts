@@ -23,6 +23,7 @@ import { syncGithubCommentsToComments } from '@/module/comment/sync_to_comments'
 import { fetchGithubComments } from '@/module/comment/fetch_github_comments'
 import { getReadCredential, CredentialNotFoundError } from '@/service/github_credential_service'
 import { logger } from '@/service/logger'
+import { syncGithubComments } from '@/module/comment/sync_github_comments'
 
 const router = express.Router()
 
@@ -174,20 +175,7 @@ router.get('/:id/details', async (req: Request, res: Response) => {
       state: event.state || null,
     }))
 
-    await fetchGithubComments({
-      credential,
-      pullRequestId: pullRequest.id,
-      initiatorId: user.id,
-      initiatorTeamId: user.team_id,
-      owner: repository.github_owner,
-      repo: repository.github_repo,
-      pullNumber: pullRequest.github_pr_number,
-    })
-
-    await syncGithubCommentsToComments({
-      pullRequestId: pullRequest.id,
-      teamId: user.team_id,
-    })
+    await syncGithubComments(credential, pullRequest, user, repository)
 
     // Update the pull request with reviews and timeline
     await pullRequest.update({

@@ -75,7 +75,6 @@ export interface GithubCommentSync {
   } | null
 
   sync_state: 'synced' | 'pending_push' | 'pending_pull' | 'conflict'
-  sync_direction: 'inbound' | 'outbound'
   sync_error: string | null
 
   // If last_synced_at is behind github_updated_at or comment.updated_at, we need to sync the comment.

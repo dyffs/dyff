@@ -8,6 +8,8 @@ import { assertPullRequestAccess } from '@/service/permission_service'
 import { Op } from 'sequelize'
 import { getPublicUserInfo } from '@/service/utils'
 import { logger } from '@/service/logger'
+import { getWriteCredential, CredentialNotFoundError } from '@/service/github_credential_service'
+import { submitDiffComment, submitReplyComment } from '@/module/comment/submit_github_comment'
 
 const router = express.Router()
 
@@ -182,142 +184,90 @@ router.get('/thread/:rootCommentId', async (req: Request, res: Response) => {
   }
 })
 
-// Create a new comment
-router.post('/', async (req: Request, res: Response) => {
+
+// Post a new diff comment to GitHub and persist it locally.
+router.post('/diff', async (req: Request, res: Response) => {
   try {
     const user = requestContext.currentUser()
-    const {
-      pull_request_id: pullRequestId,
-      thread_id: threadId,
-      content,
-      code_anchor: codeAnchor,
-    } = req.body
+    const { pull_request_id, body, code_anchor } = req.body ?? {}
 
-    if (!pullRequestId) {
-      return res.status(400).json({ error: 'pull_request_id is required' })
+    if (!pull_request_id || typeof body !== 'string' || !body.trim() || !code_anchor) {
+      return res.status(400).json({
+        error: 'pull_request_id, body, and code_anchor are required',
+      })
     }
 
-    const { pullRequest, repository } = await assertPullRequestAccess(user.id, pullRequestId)
+    const requiredAnchorFields = ['commit_sha', 'file_path', 'line_start', 'start_side', 'line_end', 'end_side']
+    for (const field of requiredAnchorFields) {
+      if (code_anchor[field] === undefined || code_anchor[field] === null) {
+        return res.status(400).json({ error: `code_anchor.${field} is required` })
+      }
+    }
 
-    const comment = await CommentModel.create({
-      pull_request_id: pullRequestId,
-      thread_id: threadId ?? null,
-      user_id: user.id,
-      team_id: user.team_id,
-      origin: 'human',
-      agent_type: null,
-      status: 'active',
-      content: {
-        body: content,
-        body_html: null,
-        diff_hunk: null,
-      },
-      attachments: {},
-      code_anchor: codeAnchor ?? null,
+    const { pullRequest, repository } = await assertPullRequestAccess(user.id, pull_request_id)
+    const credential = await getWriteCredential(user)
+
+    const comment = await submitDiffComment({
+      credential,
+      user,
+      pullRequest,
+      repository,
+      body,
+      codeAnchor: code_anchor,
     })
 
-    const userInfo = await getPublicUserInfo([user.id])
-    const serializedComment = serializeComment(comment, userInfo)
-
-    return res.status(201).json({
-      ...serializedComment,
-      comment: serializedComment,
-    })
+    const userInfo = await getPublicUserInfo([comment.user_id])
+    return res.status(201).json({ comment: serializeComment(comment, userInfo) })
   } catch (error) {
-    logger.error('Error creating comment:', error)
+    if (error instanceof CredentialNotFoundError) {
+      return res.status(404).json({ error: error.message, code: error.code })
+    }
+    logger.error('Error submitting diff comment:', error)
     return res.status(500).json({
-      error: 'Failed to create comment',
+      error: 'Failed to submit diff comment',
       message: (error as Error).message,
     })
   }
 })
 
-// List comments for a pull request
-router.get('/pull_request/:pullRequestId', async (req: Request, res: Response) => {
+// Post a reply to an existing GitHub review comment thread and persist locally.
+router.post('/reply', async (req: Request, res: Response) => {
   try {
     const user = requestContext.currentUser()
-    const { pullRequestId } = req.params
+    const { parent_comment_id, body } = req.body ?? {}
 
-    await assertPullRequestAccess(user.id, pullRequestId)
-
-    const visibilityFilter = buildCommentVisibilityFilter(user.team_id)
-
-    const comments = await CommentModel.findAll({
-      where: {
-        [Op.and]: [
-          { pull_request_id: pullRequestId },
-          visibilityFilter,
-        ],
-      },
-      order: [['created_at', 'ASC']],
-    })
-
-    const userInfo = await getPublicUserInfo(comments.map(comment => comment.user_id))
-
-    return res.status(200).json(serializeComments(comments, userInfo))
-  } catch (error) {
-    logger.error('Error listing comments:', error)
-    return res.status(500).json({
-      error: 'Failed to list comments',
-      message: (error as Error).message,
-    })
-  }
-})
-
-// Update a comment
-router.patch('/:id', async (req: Request, res: Response) => {
-  try {
-    const user = requestContext.currentUser()
-    const { id } = req.params
-    const { status, content, attachments } = req.body
-
-    const comment = await CommentModel.findOne({
-      where: { id, user_id: user.id },
-    })
-
-    if (!comment) {
-      return res.status(404).json({ error: 'Comment not found' })
+    if (!parent_comment_id || typeof body !== 'string' || !body.trim()) {
+      return res.status(400).json({
+        error: 'parent_comment_id and body are required',
+      })
     }
 
-    if (status !== undefined) comment.status = status
-    if (content !== undefined) comment.content = content
-    if (attachments !== undefined) comment.attachments = attachments
-
-    await comment.save()
-
-    const userInfo = await getPublicUserInfo([user.id])
-
-    return res.status(200).json(serializeComment(comment, userInfo))
-  } catch (error) {
-    logger.error('Error updating comment:', error)
-    return res.status(500).json({
-      error: 'Failed to update comment',
-      message: (error as Error).message,
-    })
-  }
-})
-
-// Delete a comment
-router.delete('/:id', async (req: Request, res: Response) => {
-  try {
-    const user = requestContext.currentUser()
-    const { id } = req.params
-
-    const comment = await CommentModel.findOne({
-      where: { id, user_id: user.id },
-    })
-
-    if (!comment) {
-      return res.status(404).json({ error: 'Comment not found' })
+    const parentComment = await CommentModel.findByPk(parent_comment_id)
+    if (!parentComment) {
+      return res.status(404).json({ error: 'Parent comment not found' })
     }
 
-    await comment.destroy()
+    const { pullRequest, repository } = await assertPullRequestAccess(user.id, parentComment.pull_request_id)
+    const credential = await getWriteCredential(user)
 
-    return res.status(200).json({ success: true })
+    const comment = await submitReplyComment({
+      credential,
+      user,
+      pullRequest,
+      repository,
+      body,
+      parentCommentId: parent_comment_id,
+    })
+
+    const userInfo = await getPublicUserInfo([comment.user_id])
+    return res.status(201).json({ comment: serializeComment(comment, userInfo) })
   } catch (error) {
-    logger.error('Error deleting comment:', error)
+    if (error instanceof CredentialNotFoundError) {
+      return res.status(404).json({ error: error.message, code: error.code })
+    }
+    logger.error('Error submitting reply comment:', error)
     return res.status(500).json({
-      error: 'Failed to delete comment',
+      error: 'Failed to submit reply comment',
       message: (error as Error).message,
     })
   }

@@ -71,10 +71,6 @@ export default class GithubCommentSyncModel extends Model {
   @Column({ type: DataType.TEXT, defaultValue: 'pending_pull' })
   declare sync_state: GithubCommentSync['sync_state'];
 
-  @AllowNull(false)
-  @Column({ type: DataType.TEXT, defaultValue: 'inbound' })
-  declare sync_direction: GithubCommentSync['sync_direction'];
-
   @Column({ type: DataType.TEXT })
   declare sync_error: string | null;
 

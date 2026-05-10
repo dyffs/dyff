@@ -54,7 +54,6 @@ interface SyncCreatePayload {
   attachments: object
   code_anchor: GithubCommentSync['code_anchor']
   sync_state: 'pending_pull'
-  sync_direction: 'inbound'
   sync_error: null
   github_created_at: Date
   github_updated_at: Date
@@ -179,7 +178,6 @@ export async function fetchGithubComments(options: FetchGithubCommentsOptions): 
         attachments: {},
         code_anchor: n.code_anchor,
         sync_state: 'pending_pull',
-        sync_direction: 'inbound',
         sync_error: null,
         github_created_at: n.github_created_at,
         github_updated_at: n.github_updated_at,
