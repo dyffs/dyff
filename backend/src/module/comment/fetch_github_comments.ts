@@ -2,7 +2,8 @@ import GithubCredential from '@/database/github_credential'
 import GithubCommentSyncModel from '@/database/github_comment_sync'
 import { getPullRequestReviewComments, getPullRequestIssueComments } from '@/service/github_comment_api'
 import { GithubReviewComment, GithubIssueComment } from '@/types'
-import { GithubCommentSync } from './types'
+import { Comment } from './types'
+import { normalizeCodeAnchor } from '@/service/utils'
 
 // The JSONB `content` column on github_comment_syncs stores extra UI fields
 // (html_url, avatar_url) beyond the canonical Comment.content shape.
@@ -37,7 +38,7 @@ interface NormalizedComment {
   github_thread_id: string | null
   comment_kind: 'review_comment' | 'issue_comment'
   content: SyncContent
-  code_anchor: GithubCommentSync['code_anchor']
+  code_anchor: Comment['code_anchor']
   github_created_at: Date
   github_updated_at: Date
 }
@@ -52,7 +53,7 @@ interface SyncCreatePayload {
   comment_kind: NormalizedComment['comment_kind']
   content: SyncContent
   attachments: object
-  code_anchor: GithubCommentSync['code_anchor']
+  code_anchor: Comment['code_anchor']
   sync_state: 'pending_pull'
   sync_error: null
   github_created_at: Date
@@ -71,14 +72,16 @@ function normalizeReviewComment(c: GithubReviewComment): NormalizedComment {
       html_url: c.html_url,
       avatar_url: c.user.avatar_url,
     },
-    code_anchor: {
+    code_anchor: normalizeCodeAnchor({
       commit_sha: c.commit_id,
       file_path: c.path,
-      line_start: c.start_line ?? c.original_start_line ?? 0,
-      start_side: (c.start_side ?? 'RIGHT') as 'LEFT' | 'RIGHT',
-      line_end: c.line ?? c.original_line ?? 0,
-      end_side: (c.side ?? 'RIGHT') as 'LEFT' | 'RIGHT',
-    },
+      line: c.line,
+      original_line: c.original_line,
+      start_line: c.start_line,
+      original_start_line: c.original_start_line,
+      start_side: c.start_side,
+      side: c.side,
+    }),
     github_created_at: new Date(c.created_at),
     github_updated_at: new Date(c.updated_at),
   }

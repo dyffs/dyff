@@ -159,6 +159,8 @@ router.get('/thread/:rootCommentId', async (req: Request, res: Response) => {
         [Op.and]: [
           { pull_request_id: rootComment.pull_request_id },
           {
+            // The root comment does not have a thread_id but we want to include it
+            // in the thread, so we use this OR
             [Op.or]: [
               { id: rootCommentId },
               { thread_id: rootCommentId },
@@ -197,7 +199,7 @@ router.post('/diff', async (req: Request, res: Response) => {
       })
     }
 
-    const requiredAnchorFields = ['commit_sha', 'file_path', 'line_start', 'start_side', 'line_end', 'end_side']
+    const requiredAnchorFields = ['commit_sha', 'file_path', 'line_start', 'side', 'line_end']
     for (const field of requiredAnchorFields) {
       if (code_anchor[field] === undefined || code_anchor[field] === null) {
         return res.status(400).json({ error: `code_anchor.${field} is required` })

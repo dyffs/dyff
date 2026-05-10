@@ -21,9 +21,8 @@ export interface Comment {
     commit_sha: string
     file_path: string
     line_start: number
-    start_side: 'LEFT' | 'RIGHT'
     line_end: number
-    end_side: 'LEFT' | 'RIGHT'
+    side: 'LEFT' | 'RIGHT'
   } | null
 
   created_at: Date
@@ -65,14 +64,7 @@ export interface GithubCommentSync {
     diff_hunk: string | null
   }
   attachments: object
-  code_anchor: {
-    commit_sha: string
-    file_path: string
-    line_start: number
-    start_side: 'LEFT' | 'RIGHT'
-    line_end: number
-    end_side: 'LEFT' | 'RIGHT'
-  } | null
+  code_anchor: Comment['code_anchor']
 
   sync_state: 'synced' | 'pending_push' | 'pending_pull' | 'conflict'
   sync_error: string | null

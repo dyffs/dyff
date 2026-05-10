@@ -8,6 +8,7 @@ import GithubCredential from '@/database/github_credential'
 import { GithubReviewComment, GithubIssueComment } from '@/types'
 import { createOctokitClient, createWriteClient } from './github'
 import { logger } from './logger'
+import { Comment } from '@/module/comment/types'
 
 /**
  * Get all review comments (comments on code) for a pull request
@@ -207,11 +208,7 @@ export async function createDiffComment(
   params: {
     body: string
     commit_id: string
-    path: string
-    line: number
-    side: 'LEFT' | 'RIGHT'
-    start_line?: number
-    start_side?: 'LEFT' | 'RIGHT'
+    code_anchor: NonNullable<Comment['code_anchor']>
   }
 ): Promise<any> {
   const octokit = await createWriteClient(credential)
@@ -223,13 +220,10 @@ export async function createDiffComment(
       pull_number,
       body: params.body,
       commit_id: params.commit_id,
-      path: params.path,
-      line: params.line,
-      side: params.side,
-      ...(params.start_line != null && {
-        start_line: params.start_line,
-        start_side: params.start_side,
-      }),
+      path: params.code_anchor.file_path,
+      start_line: params.code_anchor.line_start,
+      line: params.code_anchor.line_end,
+      side: params.code_anchor.side,
     })
 
     return data

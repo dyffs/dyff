@@ -6,24 +6,15 @@ import Repository from '@/database/repository'
 import User from '@/database/user'
 import { createDiffComment, replyToComment } from '@/service/github_comment_api'
 import { GithubReviewComment } from '@/types'
-import { GithubCommentSync } from './types'
-
-interface CodeAnchor {
-  commit_sha: string
-  file_path: string
-  line_start: number
-  start_side: 'LEFT' | 'RIGHT'
-  line_end: number
-  end_side: 'LEFT' | 'RIGHT'
-}
-
+import { Comment, GithubCommentSync } from './types'
+import { normalizeCodeAnchor } from '@/service/utils'
 interface SubmitDiffCommentInput {
   credential: GithubCredential
   user: User
   pullRequest: PullRequest
   repository: Repository
   body: string
-  codeAnchor: CodeAnchor
+  codeAnchor: NonNullable<Comment['code_anchor']>
 }
 
 interface SubmitReplyCommentInput {
@@ -54,17 +45,6 @@ function buildSyncContent(c: GithubReviewComment): SyncContent {
   }
 }
 
-function buildCodeAnchor(c: GithubReviewComment): GithubCommentSync['code_anchor'] {
-  return {
-    commit_sha: c.commit_id,
-    file_path: c.path,
-    line_start: c.start_line ?? c.original_start_line ?? 0,
-    start_side: (c.start_side ?? 'RIGHT') as 'LEFT' | 'RIGHT',
-    line_end: c.line ?? c.original_line ?? 0,
-    end_side: (c.side ?? 'RIGHT') as 'LEFT' | 'RIGHT',
-  }
-}
-
 /**
  * Persist a freshly-pushed GitHub review comment locally without re-fetching
  * the entire comment list. Writes the github_comment_sync row in `synced`
@@ -83,7 +63,17 @@ async function persistSubmittedReviewComment(params: {
   const githubCreatedAt = new Date(github.created_at)
   const githubUpdatedAt = new Date(github.updated_at)
   const content = buildSyncContent(github)
-  const codeAnchor = buildCodeAnchor(github)
+
+  const codeAnchor = normalizeCodeAnchor({
+    commit_sha: github.commit_id,
+    file_path: github.path,
+    original_line: github.original_line,
+    line: github.line,
+    start_line: github.start_line,
+    original_start_line: github.original_start_line,
+    start_side: github.start_side,
+    side: github.side,
+  })
 
   const comment = await CommentModel.create({
     pull_request_id: pullRequest.id,
@@ -138,13 +128,7 @@ export async function submitDiffComment(input: SubmitDiffCommentInput): Promise<
     {
       body,
       commit_id: codeAnchor.commit_sha,
-      path: codeAnchor.file_path,
-      line: codeAnchor.line_end,
-      side: codeAnchor.end_side,
-      ...(isMultiLine && {
-        start_line: codeAnchor.line_start,
-        start_side: codeAnchor.start_side,
-      }),
+      code_anchor: codeAnchor,
     }
   ) as GithubReviewComment
 
