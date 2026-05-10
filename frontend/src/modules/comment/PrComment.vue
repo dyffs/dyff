@@ -21,7 +21,7 @@
     </template>
     <CommentInput
       ref="commentInputRef"
-      :username="currentUsername"
+      :username="githubUsername"
       :loading="isReplying"
       mode="reply-only"
       class="mt-2"
@@ -35,7 +35,7 @@ import { computed, ref, useTemplateRef } from 'vue'
 import ThreadSidebar from './ThreadSidebar.vue'
 import { useCommentSystem } from './useCommentSystem'
 import type { DiffNavigateEvent } from '@/types'
-import { usePullRequest } from '../pull_request/usePullRequest'
+import { useAccount } from '@/modules/account/useAccount'
 import type { SerializedPullRequest } from '@/types'
 import CommentInput from './CommentInput.vue'
 
@@ -45,8 +45,7 @@ const props = defineProps<{
 
 const { threadMap, postComment } = useCommentSystem()!
 
-const prState = usePullRequest()!
-const { currentUsername } = prState
+const { githubUsername } = useAccount()!
 
 const sortedThreadIds = computed(() => {
   const ids = Object.keys(threadMap.value)

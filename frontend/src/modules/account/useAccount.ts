@@ -15,7 +15,8 @@ const [useProvideAccount, useAccount] = createInjectionState(() => {
 
   const isAuthenticated = computed(() => !!account.value?.user)
   const user = computed(() => account.value?.user ?? null)
-  const team = computed(() => account.value?.team ?? null)
+  const team = computed(() => account.value?.team ?? null)  
+  const githubUsername = computed(() => account.value?.user?.github_username ?? null)
 
   function getToken (): string | null {
     return localStorage.getItem(TOKEN_KEY)
@@ -126,6 +127,7 @@ const [useProvideAccount, useAccount] = createInjectionState(() => {
     redirectToLogin,
     loginWithGithub,
     initializeAuth,
+    githubUsername,
   }
 })
 

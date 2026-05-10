@@ -2,7 +2,7 @@ import { createInjectionState } from '@vueuse/core'
 import { computed, onUnmounted, ref, shallowRef, triggerRef, type Ref } from 'vue'
 import { isBot } from '@/lib/utils'
 import {
-  getRoots, getThread, postComment as postCommentApi, type PostCommentParams,
+  getRoots, getThread, type PostCommentParams,
   type PostReplyCommentParams,
   postReplyComment,
 } from './commentApi'
@@ -187,9 +187,9 @@ const [useProvideCommentSystem, useCommentSystem] = createInjectionState(() => {
 
   // Deprecated flow, to be removed
   async function postComment (params: PostCommentParams): Promise<void> {
-    const comment = await postCommentApi(params)
-    const rootId = comment.thread_id ?? comment.id
-    await fetchThread(rootId)
+    // const comment = await postCommentApi(params)
+    // const rootId = comment.thread_id ?? comment.id
+    // await fetchThread(rootId)
   }
 
   const threadMetaMap = computed(() => {

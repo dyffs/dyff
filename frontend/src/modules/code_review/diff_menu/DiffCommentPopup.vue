@@ -12,7 +12,7 @@
       </div>
       <CommentInput
         ref="commentInputRef"
-        :username="currentUsername"
+        :username="githubUsername"
         :loading="isSubmitting"
         mode="diff"
         @reply="handleComment"
@@ -25,6 +25,7 @@
 <script setup lang="ts">
 import { ref, watch, useTemplateRef, nextTick, type CSSProperties } from 'vue'
 import { computePosition, offset, flip, shift } from '@floating-ui/dom'
+import { useAccount } from '@/modules/account/useAccount'
 import { onClickOutside } from '@vueuse/core'
 
 import CommentInput from '@/modules/comment/CommentInput.vue'
@@ -34,7 +35,7 @@ import { usePullRequest } from '@/modules/pull_request/usePullRequest'
 const contextMenu = useContextMenu()!
 const { isCommentOpen, commentAnchorElement, commentContextData, closeComment } = contextMenu
 
-const { currentUsername } = usePullRequest()!
+const { githubUsername } = useAccount()!
 
 const popupRef = ref<HTMLElement | null>(null)
 const commentInputRef = useTemplateRef<InstanceType<typeof CommentInput>>('commentInputRef')

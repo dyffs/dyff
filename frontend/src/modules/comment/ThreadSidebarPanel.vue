@@ -37,7 +37,7 @@
         <div class="shrink-0">
           <CommentInput
             ref="commentInputRef"
-            :username="currentUsername"
+            :username="githubUsername"
             :loading="isReplying"
             mode="reply-only"
             @reply="handleReply"
@@ -53,7 +53,7 @@ import { ref, toRefs, useTemplateRef } from 'vue'
 import { X } from 'lucide-vue-next'
 import type { CommentThread } from './types'
 import { useCommentSystem } from './useCommentSystem'
-import { usePullRequest } from '../pull_request/usePullRequest'
+import { useAccount } from '@/modules/account/useAccount'
 import SidebarCommentItem from './SidebarCommentItem.vue'
 import CommentInput from './CommentInput.vue'
 
@@ -68,8 +68,7 @@ const refProps = toRefs(props)
 
 defineEmits<{ close: [] }>()
 
-const prState = usePullRequest()!
-const { currentUsername } = prState
+const { githubUsername } = useAccount()!
 const { postComment, activePullRequestId } = useCommentSystem()!
 
 const isReplying = ref(false)

@@ -4,7 +4,7 @@
       v-for="reviewer in displayReviewers"
       :key="reviewer"
       :reviewer="reviewer"
-      :current-username="currentUsername || ''"
+      :current-username="githubUsername || ''"
       class="-ml-1"
     />
     <div
@@ -20,7 +20,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import ReviewerAvatar from './ReviewerAvatar.vue'
-import { useRepo } from '@/modules/repo/useRepo'
+import { useAccount } from '@/modules/account/useAccount'
 
 interface Props {
   reviewers: string[]
@@ -28,16 +28,16 @@ interface Props {
 
 const props = defineProps<Props>()
 
-const { currentUsername } = useRepo()!
+const { githubUsername } = useAccount()!
 
 const MAX_VISIBLE = 3
 
 
 const displayReviewers = computed(() => {
-  const currentUserReviewer = props.reviewers.find(r => r === currentUsername.value)
+  const currentUserReviewer = props.reviewers.find(r => r === githubUsername.value)
 
   if (currentUserReviewer) {
-    const otherReviewers = props.reviewers.filter(r => r !== currentUsername.value)
+    const otherReviewers = props.reviewers.filter(r => r !== githubUsername.value)
     return [currentUserReviewer, ...otherReviewers].slice(0, MAX_VISIBLE)
   }
 

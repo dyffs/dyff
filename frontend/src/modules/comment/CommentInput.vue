@@ -3,22 +3,20 @@
     <!-- Header with Avatar -->
     <div class="flex gap-2 mb-1 items-start">
       <GithubAvatar
-        :username="username || 'You'"
+        v-if="username"
+        :username="username"
         class="h-5 w-5 ring-1 ring-neutral-300 mt-2"
       />
+      <span v-else>You</span>
       <!-- Editor -->
-      <div class="min-h-[18px] bg-white border rounded flex-1">
-        <EditorContent
-          v-if="editor"
-          :editor="editor"
-          class="prose prose-sm px-2 focus:outline-none max-w-none
-          prose-p:my-2
-          prose-p:text-sm
-          prose-ul:my-2
-          prose-li:my-0
+      <textarea
+        ref="textareaRef"
+        v-model="textContent"
+        placeholder="Write your comment here..."
+        class="min-h-[18px] bg-white border rounded flex-1 resize-none
+          px-2 py-1 text-sm focus:outline-none
           selection:bg-[#4389d884]"
-        />
-      </div>
+      />
     </div>
 
     
@@ -71,16 +69,14 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onBeforeUnmount, watch } from 'vue'
-import { useEditor, EditorContent } from '@tiptap/vue-3'
-import StarterKit from '@tiptap/starter-kit'
+import { computed, ref, watch } from 'vue'
 import { Button } from '@/components/ui/button'
 import type { AppComment } from '@/types'
 import GithubAvatar from '@/components/custom/GithubAvatar.vue'
 import { Spinner } from '@/components/ui/spinner'
 
 interface Props {
-  username: string
+  username?: string | null
   avatarUrl?: string
   mode?: 'review' | 'reply-only' | 'diff'
   existingComment?: AppComment
@@ -104,47 +100,29 @@ const emit = defineEmits<{
 // Determine if we're in edit mode
 const isEditMode = computed(() => !!props.existingComment)
 
-// Initialize editor with existing content if available
-const initialContent = computed(() => {
-  if (props.existingComment?.content?.body) {
-    return props.existingComment.content.body
-  }
-  return ''
-})
+const textContent = ref(initialText())
+const textareaRef = ref<HTMLTextAreaElement | null>(null)
 
-const editor = useEditor({
-  extensions: [StarterKit],
-  content: initialContent.value,
-  editorProps: {
-    attributes: {
-      // class: 'focus:outline-none min-h-[40px]',
-    },
-  },
-})
+function initialText (): string {
+  return props.existingComment?.content?.body || ''
+}
 
-// Check if editor has content
-const hasContent = computed(() => {
-  if (!editor.value) return false
-  const text = editor.value.getText().trim()
-  return text.length > 0
-})
+// Check if textarea has content
+const hasContent = computed(() => textContent.value.trim().length > 0)
 
 // Watch for external changes to existing comment
 watch(
   () => props.existingComment?.content?.body,
   (newContent) => {
-    if (editor.value && newContent !== undefined) {
-      const currentText = editor.value.getText()
-      if (currentText !== newContent) {
-        editor.value.commands.setContent(newContent || '')
-      }
+    if (newContent !== undefined && textContent.value !== newContent) {
+      textContent.value = newContent || ''
     }
   }
 )
 
 // Action handlers
 const getEditorContent = (): string => {
-  return editor.value?.getText() || ''
+  return textContent.value
 }
 
 const handleCancel = () => {
@@ -168,34 +146,15 @@ const handleConfirm = () => {
 }
 
 function clear () {
-  editor.value?.commands.clearContent()
+  textContent.value = ''
 }
 
 function focus () {
-  editor.value?.commands.focus()
+  textareaRef.value?.focus()
 }
 
 defineExpose({ clear, focus })
-
-onBeforeUnmount(() => {
-  editor.value?.destroy()
-})
 </script>
 
-<style scoped>
-:deep(.ProseMirror) {
-  min-height: 18px;
-}
 
-:deep(.ProseMirror:focus) {
-  outline: none;
-}
 
-:deep(.ProseMirror p.is-editor-empty:first-child::before) {
-  content: 'Write your comment here...';
-  float: left;
-  color: hsl(var(--muted-foreground));
-  pointer-events: none;
-  height: 0;
-}
-</style>

@@ -20,11 +20,6 @@ const [useProvideRepo, useRepo] = createInjectionState(() => {
   const isLoadingTracked = ref(false)
   const isTracking = ref(false)
 
-  const { user } = useAccount()!
-
-  // TODO: use backend
-  const currentUsername = ref<string>(user.value?.github_username || '')
-
   function getCachedRepos (): SerializedRepository[] | null {
     try {
       const cached = localStorage.getItem(CACHE_KEY)
@@ -146,7 +141,6 @@ const [useProvideRepo, useRepo] = createInjectionState(() => {
     fetchTrackedRepos,
     trackRepositories,
     untrackRepository,
-    currentUsername,
   }
 })
 

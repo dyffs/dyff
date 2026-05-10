@@ -15,7 +15,7 @@
     <CommentInput
       v-show="!isCollapsed"
       ref="commentInputRef"
-      :username="currentUsername"
+      :username="githubUsername"
       :loading="isReplying"
       mode="reply-only"
       @reply="handleReply"
@@ -30,7 +30,7 @@ import type { CommentThread } from './types'
 import type { DiffNavigateEvent } from '@/types'
 import { ref, useTemplateRef, computed } from 'vue'
 import { useCommentConfig } from './useCommentConfig'
-import { usePullRequest } from '../pull_request/usePullRequest'
+import { useAccount } from '@/modules/account/useAccount'
 import { useCommentSystem } from './useCommentSystem'
 import { toast } from 'vue-sonner'
 
@@ -52,8 +52,7 @@ const props = withDefaults(defineProps<Props>(), {
 
 const { replyComment } = useCommentSystem()!
 
-const prState = usePullRequest()!
-const { currentUsername } = prState
+const { githubUsername } = useAccount()!
 
 const config = useCommentConfig()!
 

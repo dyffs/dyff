@@ -5,8 +5,6 @@ import { useRepo } from '../repo/useRepo'
 import { listPullRequests, getPullRequestDetails, getPullRequestDiff } from './pullRequestApi'
 
 const [useProvidePullRequest, usePullRequest] = createInjectionState(() => {
-  const { currentUsername } = useRepo()!
-
   const pullRequests = shallowRef<SerializedPullRequest[]>([])
   const diffStore = new Map<string, string>()
 
@@ -128,7 +126,6 @@ const [useProvidePullRequest, usePullRequest] = createInjectionState(() => {
     fetchPullRequestDiff,
     fetchPrDetails,
     init,
-    currentUsername,
   }
 })
 
