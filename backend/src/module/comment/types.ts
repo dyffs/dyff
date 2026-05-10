@@ -1,3 +1,5 @@
+import type { CodeAnchor } from '@@/types'
+
 export interface Comment {
   id: string
   thread_id: string | null
@@ -16,15 +18,7 @@ export interface Comment {
   }
 
   attachments: object
-
-  code_anchor: {
-    commit_sha: string
-    file_path: string
-    line_start: number
-    line_end: number
-    side: 'LEFT' | 'RIGHT'
-  } | null
-
+  code_anchor: CodeAnchor | null
   created_at: Date
   updated_at: Date
 }
@@ -64,7 +58,7 @@ export interface GithubCommentSync {
     diff_hunk: string | null
   }
   attachments: object
-  code_anchor: Comment['code_anchor']
+  code_anchor: CodeAnchor | null
 
   sync_state: 'synced' | 'pending_push' | 'pending_pull' | 'conflict'
   sync_error: string | null
