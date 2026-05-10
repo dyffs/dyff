@@ -31,6 +31,8 @@ import type { DiffNavigateEvent } from '@/types'
 import { ref, useTemplateRef, computed } from 'vue'
 import { useCommentConfig } from './useCommentConfig'
 import { usePullRequest } from '../pull_request/usePullRequest'
+import { useCommentSystem } from './useCommentSystem'
+import { toast } from 'vue-sonner'
 
 interface Props {
   thread: CommentThread
@@ -48,6 +50,8 @@ const props = withDefaults(defineProps<Props>(), {
   showThreadHeader: true,
 })
 
+const { replyComment } = useCommentSystem()!
+
 const prState = usePullRequest()!
 const { currentUsername } = prState
 
@@ -60,8 +64,18 @@ const isCollapsed = computed(() => props.alwaysExpanded ? false : checkCollapsed
 const isReplying = ref(false)
 
 async function handleReply (content: string) {
-  // TODO: implement
-  console.log('handleReply', content)
+  isReplying.value = true
+  try {
+    await replyComment({
+      parent_comment_id: props.threadId,
+      body: content,
+    })
+  } catch (error) {
+    toast.error(`Failed to reply to comment: ${(error as Error).message}`)
+    console.error('Error replying to comment:', error)
+  } finally {
+    isReplying.value = false
+  }
 }
 
 defineEmits<{

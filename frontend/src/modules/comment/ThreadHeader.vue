@@ -156,7 +156,7 @@ const participantsText = computed(() => {
 function clickCommentHeader (comment: AppComment) {
   let fileId = comment.code_anchor?.file_path
 
-  if (comment.code_anchor?.end_side === 'LEFT') {
+  if (comment.code_anchor?.side === 'LEFT') {
     fileId = `${fileId}::`
   } else {
     fileId = `::${fileId}`
@@ -166,7 +166,7 @@ function clickCommentHeader (comment: AppComment) {
 
   emit('select-file', {
     fileId,
-    line: { lineNumber, side: comment.code_anchor?.end_side ?? 'RIGHT' },
+    line: { lineNumber, side: comment.code_anchor?.side ?? 'RIGHT' },
     options: {
       flashing: true,
       expanded: true

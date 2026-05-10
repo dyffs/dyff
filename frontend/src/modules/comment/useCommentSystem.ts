@@ -1,7 +1,11 @@
 import { createInjectionState } from '@vueuse/core'
 import { computed, onUnmounted, ref, shallowRef, triggerRef, type Ref } from 'vue'
 import { isBot } from '@/lib/utils'
-import { getRoots, getThread, postComment as postCommentApi, type PostCommentParams } from './commentApi'
+import {
+  getRoots, getThread, postComment as postCommentApi, type PostCommentParams,
+  type PostReplyCommentParams,
+  postReplyComment,
+} from './commentApi'
 import { getSessionProgress } from '@/modules/agent/chatApi'
 import type { SessionProgress } from '@/modules/agent/types'
 import type { CommentThread, RootCommentMeta, ThreadMeta } from './types'
@@ -181,8 +185,7 @@ const [useProvideCommentSystem, useCommentSystem] = createInjectionState(() => {
     return promise
   }
 
-  // --- Post comment ---
-
+  // Deprecated flow, to be removed
   async function postComment (params: PostCommentParams): Promise<void> {
     const comment = await postCommentApi(params)
     const rootId = comment.thread_id ?? comment.id
@@ -230,6 +233,14 @@ const [useProvideCommentSystem, useCommentSystem] = createInjectionState(() => {
     }
   })
 
+  // --- Post reply comment ---
+
+  async function replyComment (params: PostReplyCommentParams): Promise<void> {
+    const comment = await postReplyComment(params)
+    const rootId = comment.thread_id ?? comment.id
+    await fetchThread(rootId)
+  }
+
   onUnmounted(() => {
     stopPolling()
     for (const timer of progressTimers.values()) {
@@ -252,6 +263,7 @@ const [useProvideCommentSystem, useCommentSystem] = createInjectionState(() => {
     threadMetaMap,
     getProgress,
     progressMap,
+    replyComment,
   }
 })
 

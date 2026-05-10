@@ -43,7 +43,7 @@ export function normalizeCodeAnchor(githubPayload: {
     commit_sha: githubPayload.commit_sha,
     file_path: githubPayload.file_path,
     side: githubPayload.side || githubPayload.start_side || 'RIGHT',
-    line_start: githubPayload.start_line || githubPayload.original_start_line || 0,
+    line_start: githubPayload.start_line || githubPayload.original_start_line || githubPayload.line || 0,
     line_end: githubPayload.line || githubPayload.original_line || 0,
   }
 }

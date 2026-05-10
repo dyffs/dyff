@@ -1,3 +1,4 @@
+import type { CodeAnchor } from '@@/types'
 export interface DiffLine {
   type: 'context' | 'addition' | 'deletion' | 'header' | 'hunk';
   content: string;
@@ -43,15 +44,6 @@ export interface GithubUser {
   node_id: string
   avatar_url: string
   type: 'Organization' | 'User' | 'Bot'
-}
-
-export interface SerializedCodeAnchor {
-  commit_sha: string
-  file_path: string
-  line_start: number
-  start_side: 'LEFT' | 'RIGHT'
-  line_end: number
-  end_side: 'LEFT' | 'RIGHT'
 }
 
 export interface SerializedRepository {
@@ -206,14 +198,7 @@ export interface AppComment {
     diff_hunk: string | null
   }
   attachments: object
-  code_anchor: {
-    commit_sha: string
-    file_path: string
-    line_start: number
-    start_side: 'LEFT' | 'RIGHT'
-    line_end: number
-    end_side: 'LEFT' | 'RIGHT'
-  } | null
+  code_anchor: CodeAnchor | null
   created_at: Date
   updated_at: Date
 }

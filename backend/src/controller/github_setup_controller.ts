@@ -4,6 +4,7 @@ import GithubCredential from '@/database/github_credential'
 import { requestContext } from '@/service/requestContext'
 import { logger } from '@/service/logger'
 import { isSaaS, isSelfHosted } from '@/service/deployment'
+import User from '@/database/user'
 
 const router = express.Router()
 
@@ -103,6 +104,12 @@ router.post('/personal_access_token', async (req: Request, res: Response) => {
       access_token: personal_access_token,
       account_login: accountLogin,
     })
+
+    const u = await User.findByPk(user.id)
+    if (u) {
+      u.github_username = accountLogin
+      await u.save()
+    }
 
     if (for_team) {
       await upsertPat({

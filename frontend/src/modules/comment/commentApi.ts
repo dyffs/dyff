@@ -1,6 +1,7 @@
 import apiClient from '@/modules/apiClient'
 import type { AppComment } from '@/types'
 import type { CommentThread, RootCommentMeta } from './types'
+import type { CodeAnchor } from '@@/types'
 
 export async function getRoots (pullRequestId: string): Promise<RootCommentMeta[]> {
   const response = await apiClient.get<{ roots: RootCommentMeta[] }>(
@@ -27,9 +28,28 @@ export interface PostCommentParams {
   code_anchor?: AppComment['code_anchor']
 }
 
-export async function postComment (params: PostCommentParams): Promise<AppComment> {
+export interface PostDiffCommentParams {
+  pull_request_id: string
+  body: string
+  code_anchor: CodeAnchor
+}
+
+export async function postDiffComment (params: PostDiffCommentParams): Promise<AppComment> {
   const response = await apiClient.post<{ comment: AppComment }>(
-    '/comments',
+    '/comments/diff',
+    params
+  )
+  return response.data.comment
+}
+
+export interface PostReplyCommentParams {
+  parent_comment_id: string
+  body: string
+}
+
+export async function postReplyComment (params: PostReplyCommentParams): Promise<AppComment> {
+  const response = await apiClient.post<{ comment: AppComment }>(
+    '/comments/reply',
     params
   )
   return response.data.comment

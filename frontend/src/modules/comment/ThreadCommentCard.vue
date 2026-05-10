@@ -123,7 +123,7 @@ const rootComment = computed(() => refProps.thread.value.comments[0])
 const filePath = computed(() => {
   const path = rootComment.value?.code_anchor?.file_path
   if (!path) return null
-  return path.length <= LIMIT_FILE_PATH_LENGTH ? path : '...' + path.slice(-LIMIT_FILE_PATH_LENGTH)
+  return path.length <= LIMIT_FILE_PATH_LENGTH ? path : `...${path.slice(-LIMIT_FILE_PATH_LENGTH)}`
 })
 
 const fileName = computed(() => rootComment.value?.code_anchor?.file_path.split('/').pop() ?? null)
@@ -133,7 +133,7 @@ function clickCommentHeader () {
   if (!comment?.code_anchor) return
 
   let fileId = comment.code_anchor.file_path
-  if (comment.code_anchor.end_side === 'LEFT') {
+  if (comment.code_anchor.side === 'LEFT') {
     fileId = `${fileId}::`
   } else {
     fileId = `::${fileId}`
@@ -142,7 +142,7 @@ function clickCommentHeader () {
   const lineNumber = comment.code_anchor.line_end ?? comment.code_anchor.line_start ?? 0
   emit('select-file', {
     fileId,
-    line: { lineNumber, side: comment.code_anchor.end_side ?? 'RIGHT' },
+    line: { lineNumber, side: comment.code_anchor.side ?? 'RIGHT' },
     options: { flashing: true, expanded: true },
   })
 }

@@ -145,7 +145,7 @@ const threadsByLine = computed(() => {
     if (!rootComment?.code_anchor) continue  // Skip general PR comments
 
     const anchor = rootComment.code_anchor
-    const key = `${anchor.file_path}:${anchor.end_side}:${anchor.line_end}`
+    const key = `${anchor.file_path}:${anchor.side}:${anchor.line_end}`
 
     const lineThread: LineThread = {
       thread: threadRef.value,

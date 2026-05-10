@@ -199,13 +199,6 @@ router.post('/diff', async (req: Request, res: Response) => {
       })
     }
 
-    const requiredAnchorFields = ['commit_sha', 'file_path', 'line_start', 'side', 'line_end']
-    for (const field of requiredAnchorFields) {
-      if (code_anchor[field] === undefined || code_anchor[field] === null) {
-        return res.status(400).json({ error: `code_anchor.${field} is required` })
-      }
-    }
-
     const { pullRequest, repository } = await assertPullRequestAccess(user.id, pull_request_id)
     const credential = await getWriteCredential(user)
 
