@@ -71,7 +71,7 @@
             >
               <TabsList class="w-full bg-transparent h-11 rounded-none border-b">
                 <TabsTrigger
-                  value="pr_comments"
+                  value="github"
                   class="text-xs hover:cursor-pointer shadow-none data-[state=active]:border-neutral-200"
                 >
                   Github
@@ -118,7 +118,7 @@
               </TabsContent>
 
               <TabsContent
-                value="pr_comments"
+                value="github"
                 class="flex-1 m-0 overflow-y-auto overflow-x-hidden"
               >
                 <PrDescriptionAndComments
@@ -236,7 +236,7 @@ const diffMode = useLocalStorage<'inline' | 'split'>('code-review-diff-mode', 'i
 
 const scroller = useProvideVirtualDiffScroller()
 const { selectedFileId, handleSelectFile } = useProvideDiffNavigate(expandFile, scroller.scrollController)
-const sidebarTab = ref<'ai_overview' | 'ai_review' | 'ai_chat' | 'pr_comments'>('ai_overview')
+const sidebarTab = ref<'ai_overview' | 'ai_review' | 'ai_chat' | 'github'>('github')
 const floatingSearchRef = ref<InstanceType<typeof FloatingSearch> | null>(null)
 
 // Provide comment config and comments state

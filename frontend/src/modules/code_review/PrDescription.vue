@@ -1,5 +1,8 @@
 <template>
   <div class="flex flex-col p-4">
+    <div class="text-xs font-medium mb-2 text-muted-foreground">
+      Description
+    </div>
     <div
       v-if="description"
       :class="`prose ${MARKDOWN_STYLES_CLASS}`"

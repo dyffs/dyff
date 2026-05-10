@@ -1,5 +1,8 @@
 <template>
-  <div class="overflow-x-hidden">
+  <div class="overflow-x-hidden pt-2">
+    <div class="text-xs font-medium mb-2 text-muted-foreground ml-4">
+      Comments
+    </div>
     <template v-if="sortedThreadIds.length > 0">
       <div
         v-if="sortedThreadIds.length === 0"
@@ -13,39 +16,28 @@
         :key="threadId"
         class="oveflow-x-hidden pb-2 hover:bg-neutral-50"
       >
-        <ThreadSidebar
+        <PrThreadList
           :thread-id="threadId"
           @select-file="handleSelectFile"
         />
       </div>
     </template>
-    <CommentInput
-      ref="commentInputRef"
-      :username="githubUsername"
-      :loading="isReplying"
-      mode="reply-only"
-      class="mt-2"
-      @reply="handleReply"
-    />
   </div>
 </template>
 
 <script setup lang="ts">
-import { computed, ref, useTemplateRef } from 'vue'
-import ThreadSidebar from './ThreadSidebar.vue'
+import { computed } from 'vue'
+import PrThreadList from './PrThreadList.vue'
 import { useCommentSystem } from './useCommentSystem'
 import type { DiffNavigateEvent } from '@/types'
-import { useAccount } from '@/modules/account/useAccount'
 import type { SerializedPullRequest } from '@/types'
-import CommentInput from './CommentInput.vue'
 
 const props = defineProps<{
   pr: SerializedPullRequest
 }>()
 
-const { threadMap, postComment } = useCommentSystem()!
+const { threadMap } = useCommentSystem()!
 
-const { githubUsername } = useAccount()!
 
 const sortedThreadIds = computed(() => {
   const ids = Object.keys(threadMap.value)
@@ -59,24 +51,6 @@ const sortedThreadIds = computed(() => {
 
   return ids
 })
-
-const isReplying = ref(false)
-const commentInputRef = useTemplateRef<InstanceType<typeof CommentInput>>('commentInputRef')
-
-async function handleReply (content: string) {
-  if (!props.pr) return
-
-  isReplying.value = true
-  try {
-    await postComment({
-      pull_request_id: props.pr.id,
-      content,
-    })
-    commentInputRef.value?.clear()
-  } finally {
-    isReplying.value = false
-  }
-}
 
 const emit = defineEmits<{
   (e: 'select-file', event: DiffNavigateEvent): void

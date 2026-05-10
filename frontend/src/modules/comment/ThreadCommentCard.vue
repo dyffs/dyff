@@ -1,7 +1,7 @@
 <template>
   <div
     v-if="rootComment"
-    class="px-2 py-3"
+    class="px-4 py-3"
   >
     <!-- Comment header: avatar + username + time -->
     <div class="flex items-center gap-2 mb-2">

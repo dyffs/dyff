@@ -1,15 +1,12 @@
 <template>
   <div class="h-full overflow-y-auto overflow-x-hidden">
-    <!-- PR Description -->
     <PrDescription
       :description="pr?.description ?? null"
       :html-description="pr?.html_description ?? null"
     />
 
-    <!-- Divider -->
     <Separator class="my-2" />
 
-    <!-- Comments -->
     <PrComment
       :pr="pr"
       @select-file="$emit('select-file', $event)"

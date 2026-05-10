@@ -94,7 +94,7 @@ const filePath = computed(() => {
   if (path.length <= LIMIT_FILE_PATH_LENGTH) return path
 
   // slide from the end
-  return '...' + path.slice(-LIMIT_FILE_PATH_LENGTH)
+  return `... + ${path.slice(-LIMIT_FILE_PATH_LENGTH)}`
 })
 
 const fileName = computed(() => {
