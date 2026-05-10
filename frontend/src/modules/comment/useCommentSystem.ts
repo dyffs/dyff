@@ -5,6 +5,8 @@ import {
   getRoots, getThread, type PostCommentParams,
   type PostReplyCommentParams,
   postReplyComment,
+  postDiffComment,
+  type PostDiffCommentParams,
 } from './commentApi'
 import { getSessionProgress } from '@/modules/agent/chatApi'
 import type { SessionProgress } from '@/modules/agent/types'
@@ -241,6 +243,12 @@ const [useProvideCommentSystem, useCommentSystem] = createInjectionState(() => {
     await fetchThread(rootId)
   }
 
+  async function addDiffComment (params: PostDiffCommentParams): Promise<void> {
+    const comment = await postDiffComment(params)
+    const rootId = comment.thread_id ?? comment.id
+    await fetchThread(rootId)
+  }
+
   onUnmounted(() => {
     stopPolling()
     for (const timer of progressTimers.values()) {
@@ -264,6 +272,7 @@ const [useProvideCommentSystem, useCommentSystem] = createInjectionState(() => {
     getProgress,
     progressMap,
     replyComment,
+    addDiffComment,
   }
 })
 

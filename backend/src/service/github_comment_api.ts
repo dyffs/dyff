@@ -214,6 +214,8 @@ export async function createDiffComment(
   const octokit = await createWriteClient(credential)
 
   try {
+    const isMultiline = params.code_anchor.line_start !== params.code_anchor.line_end
+
     const { data } = await octokit.rest.pulls.createReviewComment({
       owner,
       repo,
@@ -221,9 +223,11 @@ export async function createDiffComment(
       body: params.body,
       commit_id: params.commit_id,
       path: params.code_anchor.file_path,
-      start_line: params.code_anchor.line_start,
       line: params.code_anchor.line_end,
       side: params.code_anchor.side,
+      ...(isMultiline && {
+        start_line: params.code_anchor.line_start,
+      }),
     })
 
     return data

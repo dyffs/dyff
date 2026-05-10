@@ -50,7 +50,7 @@
               <div class="col-span-4">
                 <Label class="text-muted-foreground">Last Updated</Label>
                 <p class="font-medium">
-                  {{ new Date(credential.updated_at).toLocaleDateString() }}
+                  {{ friendlyDate(credential.updated_at) }}
                 </p>
               </div>
             </div>
@@ -258,6 +258,7 @@ import {
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog'
 import { useLlms } from './useLlms'
+import { friendlyDate } from '@/lib/utils'
 
 const { providers, credential, isSubmitting, isDeleting,
   fetchProviders, fetchCredential, saveCredential, deleteCredential } = useLlms()!

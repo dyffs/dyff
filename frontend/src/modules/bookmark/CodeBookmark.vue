@@ -23,9 +23,9 @@
         >
           <div
             v-if="previewedBookmark"
-            class="absolute -top-[112px] left-0 w-full z-50 flex flex-col items-center justify-center"
+            class="absolute -top-[120px] left-0 w-full z-50 flex flex-col items-center justify-center"
           >
-            <div class="w-[700px] bg-white rounded-t-lg border border-b-0 border-neutral-200 flex flex-col px-3 py-3 relative">
+            <div class="w-full bg-white rounded-lg border border-neutral-200 flex flex-col px-3 py-3 relative">
               <div class="flex items-center gap-1 text-[12px] font-semibold text-neutral-600">
                 <span class="text-emerald-500">
                   •

@@ -1,7 +1,7 @@
 import { createInjectionState, useDebounceFn } from '@vueuse/core'
 import { ref } from 'vue'
 import { getFileReview, updateFileReview } from './fileReviewApi'
-import type { ReviewData, Notes, CodeBookmark, FileDiff } from '@/types'
+import type { ReviewData, Notes, CodeBookmark, FileDiff, SerializedPullRequest } from '@/types'
 import { computeFileHash } from '@/utils/hash'
 
 const [useProvideCodeReview, useCodeReview] = createInjectionState(() => {
@@ -12,6 +12,7 @@ const [useProvideCodeReview, useCodeReview] = createInjectionState(() => {
   const isLoading = ref(false)
   const isSyncing = ref(false)
   const currentPrId = ref<string | null>(null)
+  const pr = ref<SerializedPullRequest | null>(null)
 
   async function loadFileReviews (prId: string): Promise<void> {
     isLoading.value = true
@@ -159,6 +160,8 @@ const [useProvideCodeReview, useCodeReview] = createInjectionState(() => {
     getReviewedCount,
     updateNotes,
     updateBookmarks,
+    currentPrId,
+    pr
   }
 })
 

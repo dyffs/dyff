@@ -48,7 +48,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch, type Ref } from 'vue'
+import { ref, watch } from 'vue'
 
 import { Spinner } from '@/components/ui/spinner'
 

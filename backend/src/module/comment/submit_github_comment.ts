@@ -119,7 +119,6 @@ async function persistSubmittedReviewComment(params: {
 export async function submitDiffComment(input: SubmitDiffCommentInput): Promise<CommentModel> {
   const { credential, user, pullRequest, repository, body, codeAnchor } = input
 
-  const isMultiLine = codeAnchor.line_start !== codeAnchor.line_end
   const github = await createDiffComment(
     credential,
     repository.github_owner,

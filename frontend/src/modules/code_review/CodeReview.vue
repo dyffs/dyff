@@ -229,9 +229,10 @@ const repo = route.params.repo as string
 
 const diff = ref('')
 const files = codeReview.files
+const pr = codeReview.pr
+
 const fileTree = ref<FileTreeNodeType[]>([])
 const isFetchingDiff = ref(false)
-const pr = ref<SerializedPullRequest | null>(null)
 const diffMode = useLocalStorage<'inline' | 'split'>('code-review-diff-mode', 'inline')
 
 const scroller = useProvideVirtualDiffScroller()

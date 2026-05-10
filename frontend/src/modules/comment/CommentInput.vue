@@ -22,26 +22,7 @@
         Cancel
       </Button>
 
-      <template v-if="isEditMode">
-        <Button
-          size="xs"
-          :disabled="!hasContent"
-          @click="handleConfirm"
-        >
-          Confirm
-        </Button>
-      </template>
-
-      <template v-else>
-        <Button
-          v-if="mode === 'review' || mode === 'diff'"
-          variant="secondary"
-          size="xs"
-          :disabled="!hasContent"
-          @click="handleStartReview"
-        >
-          Start a review
-        </Button>
+      <div>
         <Button
           size="xs"
           :disabled="!hasContent || loading"
@@ -58,7 +39,7 @@
             </span>
           </span>
         </Button>
-      </template>
+      </div>
     </div>
   </div>
 </template>
@@ -73,14 +54,13 @@ import { osShortcut } from '@/lib/utils'
 import { onKeyStroke } from '@vueuse/core'
 
 interface Props {
-  mode?: 'review' | 'reply-only' | 'diff'
+  mode: 'reply-only' | 'diff'
   isReplying?: boolean
   existingComment?: AppComment
   loading?: boolean
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  mode: 'review',
   loading: false,
   existingComment: undefined,
   isReplying: false,
@@ -92,9 +72,6 @@ const emit = defineEmits<{
   reply: [content: string]
   confirm: [content: string]
 }>()
-
-// Determine if we're in edit mode
-const isEditMode = computed(() => !!props.existingComment)
 
 const textContent = ref(initialText())
 const textareaRef = ref<HTMLTextAreaElement | null>(null)
@@ -126,19 +103,9 @@ const handleCancel = () => {
   emit('cancel')
 }
 
-const handleStartReview = () => {
-  const content = getEditorContent()
-  emit('startReview', content)
-}
-
 const handleReply = () => {
   const content = getEditorContent()
   emit('reply', content)
-}
-
-const handleConfirm = () => {
-  const content = getEditorContent()
-  emit('confirm', content)
 }
 
 function clear () {
@@ -158,6 +125,3 @@ onKeyStroke(['Enter'], (e) => {
 
 defineExpose({ clear, focus })
 </script>
-
-
-

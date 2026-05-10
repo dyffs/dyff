@@ -3,6 +3,7 @@ import { ref, computed } from 'vue'
 import { useCodeReview } from '@/modules/code_review/useCodeReview'
 import type { CodeBookmark, FileDiff } from '@/types'
 import { computeFileHash } from '@/utils/hash'
+import { uniqueId } from 'lodash-es'
 
 export const [useProvideCodeBookmark, useCodeBookmark] = createInjectionState(() => {
   const isVisible = ref(false)
@@ -61,7 +62,7 @@ export const [useProvideCodeBookmark, useCodeBookmark] = createInjectionState(()
     } else {
       // Add new bookmark
       const newBookmark: CodeBookmark = {
-        id: crypto.randomUUID(),
+        id: uniqueId('bookmark_'),
         file_diff_id: fileDiff.id,
         code_anchor: codeAnchor,
         description,

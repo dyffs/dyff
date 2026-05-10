@@ -107,3 +107,10 @@ export function getTimeAgo (d: Date | null | string): string {
 export function isSelfHostedMode () {
   return import.meta.env.VITE_DEPLOYMENT_MODE === 'self_hosted'
 }
+
+export function friendlyDate (d: Date | null | string): string {
+  if (!d) return ''
+  
+  const date = d instanceof Date ? d : new Date(d)
+  return DateTime.fromJSDate(date).toFormat('yyyy LLL dd')
+}

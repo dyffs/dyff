@@ -1,7 +1,6 @@
 import { createInjectionState } from '@vueuse/core'
 import { shallowRef, ref } from 'vue'
 import type { SerializedPullRequest } from '@/types'
-import { useRepo } from '../repo/useRepo'
 import { listPullRequests, getPullRequestDetails, getPullRequestDiff } from './pullRequestApi'
 
 const [useProvidePullRequest, usePullRequest] = createInjectionState(() => {

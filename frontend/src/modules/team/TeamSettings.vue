@@ -92,10 +92,10 @@
                   </Badge>
                 </TableCell>
                 <TableCell class="text-muted-foreground">
-                  {{ formatDate(u.last_login_at) }}
+                  {{ friendlyDate(u.last_login_at) }}
                 </TableCell>
                 <TableCell class="text-muted-foreground">
-                  {{ formatDate(u.created_at) }}
+                  {{ friendlyDate(u.created_at) }}
                 </TableCell>
                 <TableCell class="text-right">
                   <DropdownMenu>
@@ -205,7 +205,7 @@ import {
 } from '@/components/ui/alert-dialog'
 import { useProvideTeam } from './useTeam'
 import { useAccount } from '../account/useAccount'
-import { isSelfHostedMode } from '@/lib/utils'
+import { isSelfHostedMode, friendlyDate } from '@/lib/utils'
 import InviteUserDialog from './InviteUserDialog.vue'
 import EditUserDialog from './EditUserDialog.vue'
 import type { TeamUser } from './types'
@@ -229,11 +229,6 @@ const sortedUsers = computed(() => {
     return 0
   })
 })
-
-function formatDate (value: string | null) {
-  if (!value) return '—'
-  return new Date(value).toLocaleDateString()
-}
 
 function openEdit (u: TeamUser) {
   editTarget.value = u
