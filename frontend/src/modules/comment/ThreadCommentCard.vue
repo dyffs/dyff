@@ -171,7 +171,6 @@ const replyParticipants: ComputedRef<string[]> = computed(() => {
       result.value.push(name)
     }
   }
-  console.log(result)
   return result.value.slice(0, 5)
 })
 
