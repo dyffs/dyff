@@ -75,7 +75,7 @@ function getModifier (modifier: string) {
 
 export function osShortcut (modifier: string, key: string) {
   const modifierText = getModifier(modifier)
-  return `${modifierText} + ${key.toUpperCase()}`
+  return `${modifierText} + ${key}`
 }
 
 export function getTimeAgo (d: Date | null | string): string {

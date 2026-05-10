@@ -107,7 +107,7 @@
                 Code Search
               </span>
               <span class="ml-1.5 text-xs text-muted-foreground">
-                ({{ osShortcut('cmd', 'k') }})
+                ({{ osShortcut('cmd', 'K') }})
               </span>
             </Button>
           </div>

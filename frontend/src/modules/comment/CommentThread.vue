@@ -1,17 +1,20 @@
 <template>
-  <div class="">
-    <CodeComment
-      v-for="(comment, index) in thread.comments"
-      ref="codeCommentRefs"
-      :key="comment.id"
-      :comment="comment"
-      :is-thread="index > 0"
-      :thread-id="threadId"
-      :always-expanded="alwaysExpanded"
-      :show-diff-hunk="showDiffHunk"
-      :show-thread-header="showThreadHeader"
-      @select-file="$emit('select-file', $event)"
-    />
+  <div class="mb-2 flex flex-col gap-2 overflow-y-auto">
+    <div class="flex-1 overflow-y-auto">
+      <CodeComment
+        v-for="(comment, index) in thread.comments"
+        ref="codeCommentRefs"
+        :key="comment.id"
+        :comment="comment"
+        :is-thread="index > 0"
+        :thread-id="threadId"
+        :always-expanded="alwaysExpanded"
+        :show-diff-hunk="showDiffHunk"
+        :show-thread-header="showThreadHeader"
+        class="mb-3"
+        @select-file="$emit('select-file', $event)"
+      />
+    </div>  
     <CommentInput
       v-show="!isCollapsed"
       ref="commentInputRef"
@@ -50,6 +53,8 @@ const props = withDefaults(defineProps<Props>(), {
   showThreadHeader: true,
 })
 
+const commentInputRef = useTemplateRef<InstanceType<typeof CommentInput>>('commentInputRef')
+
 const { replyComment } = useCommentSystem()!
 
 const { githubUsername } = useAccount()!
@@ -69,6 +74,7 @@ async function handleReply (content: string) {
       parent_comment_id: props.threadId,
       body: content,
     })
+    commentInputRef.value?.clear()
   } catch (error) {
     toast.error(`Failed to reply to comment: ${(error as Error).message}`)
     console.error('Error replying to comment:', error)

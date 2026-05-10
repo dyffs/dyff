@@ -11,7 +11,9 @@
       @toggle-collapse="toggleCollapse"
     />
 
-    <template v-if="!isCollapsed">
+    <template
+      v-if="!isCollapsed"
+    >
       <DiffHunkDisplay
         v-if="!isThread && showDiffHunk"
         :max-lines="8"
@@ -19,17 +21,17 @@
         class="mx-4 my-3 text-xs"
       />
 
-      <div class="mx-4 my-3">
+      <div class="mb-3 px-3">
         <div
           v-if="showCommentHeader"
-          class="flex items-center gap-2 justify-between wrap-anywhere"
+          class="flex items-center gap-2 wrap-anywhere mb-2"
         >
-          <div class="flex items-center gap-1">
+          <div class="flex items-center gap-2">
             <GithubAvatar
               :username="comment.user_display_name"
-              class="h-4 w-4 ring-1 ring-neutral-300"
+              class="h-5 w-5 ring-1 ring-neutral-300"
             />
-            <span class="font-medium text-xs">{{ comment.user_display_name }}</span>
+            <span class="font-medium text-sm">{{ comment.user_display_name }}</span>
           </div>
           <span
             v-tooltip.top="comment.created_at"

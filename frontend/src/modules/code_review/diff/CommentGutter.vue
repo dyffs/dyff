@@ -30,9 +30,10 @@
         v-if="isOpen"
         ref="popupRef"
         class="w-[420px] max-h-[550px] overflow-y-auto shadow-lg
-        rounded-md bg-white border border-border z-50 flex flex-col gap-2 py-1"
+        rounded-md bg-white border border-border z-50 flex flex-col gap-2"
         :style="popupStyle"
       >
+        <!-- Different threads on the same line -->
         <CommentThread
           v-for="lineThread in threads"
           :key="lineThread.threadId"
@@ -40,8 +41,8 @@
           :thread-id="lineThread.threadId"
           always-expanded
           :show-diff-hunk="false"
-          :show-thread-header="false"
-          class="border-b border-border last:border-b-0 pb-4"
+          :show-thread-header="true"
+          class="last:border-b-0"
           @select-file="$emit('select-file', $event)"
         />
       </div>

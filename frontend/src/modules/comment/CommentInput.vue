@@ -1,28 +1,19 @@
 <template>
-  <div class="overflow-hidden px-2">
+  <div class="px-2">
     <!-- Header with Avatar -->
     <div class="flex gap-2 mb-1 items-start">
-      <GithubAvatar
-        v-if="username"
-        :username="username"
-        class="h-5 w-5 ring-1 ring-neutral-300 mt-2"
-      />
-      <span v-else>You</span>
-      <!-- Editor -->
-      <textarea
+      <Textarea
         ref="textareaRef"
         v-model="textContent"
         placeholder="Write your comment here..."
-        class="min-h-[18px] bg-white border rounded flex-1 resize-none
-          px-2 py-1 text-sm focus:outline-none
-          selection:bg-[#4389d884]"
+        class="min-h-[18px] bg-white border-border rounded focus-visible:ring-0"
       />
     </div>
 
     
 
     <!-- Action Buttons -->
-    <div class="flex justify-end items-center gap-2 py-2">
+    <div class="flex justify-end items-center gap-2 pt-2">
       <Button
         v-show="hasContent"
         variant="ghost"
@@ -61,7 +52,12 @@
             v-if="loading"
             size="xs"
           />
-          <span v-else>Comment</span>
+          <span v-else>
+            Comment
+            <span class="text-xs text-muted-foreground">
+              ({{ osShortcut('cmd', 'Enter') }})
+            </span>
+          </span>
         </Button>
       </template>
     </div>
@@ -72,19 +68,18 @@
 import { computed, ref, watch } from 'vue'
 import { Button } from '@/components/ui/button'
 import type { AppComment } from '@/types'
-import GithubAvatar from '@/components/custom/GithubAvatar.vue'
 import { Spinner } from '@/components/ui/spinner'
+import Textarea from '@/components/ui/textarea/Textarea.vue'
+import { osShortcut } from '@/lib/utils'
+import { onKeyStroke } from '@vueuse/core'
 
 interface Props {
-  username?: string | null
-  avatarUrl?: string
   mode?: 'review' | 'reply-only' | 'diff'
   existingComment?: AppComment
   loading?: boolean
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  avatarUrl: undefined,
   mode: 'review',
   loading: false,
   existingComment: undefined,
@@ -152,6 +147,13 @@ function clear () {
 function focus () {
   textareaRef.value?.focus()
 }
+
+onKeyStroke(['Enter'], (e) => {
+  if (e.metaKey || e.ctrlKey) {
+    e.preventDefault()
+    handleReply()
+  }
+})
 
 defineExpose({ clear, focus })
 </script>
