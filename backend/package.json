@@ -7,11 +7,8 @@
     "dev": "bun --watch src/index.ts",
     "test": "bun x vitest",
     "typecheck": "tsc --noEmit",
-    "test-client": "bun src/module/ai_testing/test_client.example.ts",
     "dev-worker": "bun --watch src/job_worker.ts",
-    "build": "rm -rf ./dist && tsc -p tsconfig.json --outDir ./dist && tsc-alias -p tsconfig.json --outDir ./dist",
-    "sync-db": "bun scripts/sync.ts",
-    "backfill-gh-credentials": "bun scripts/backfill_github_credentials.ts"
+    "build": "rm -rf ./dist && tsc -p tsconfig.json --outDir ./dist && tsc-alias -p tsconfig.json --outDir ./dist"
   },
   "keywords": [],
   "author": "",
