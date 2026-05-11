@@ -23,6 +23,7 @@ import fs from 'fs/promises'
 import { createOctokitClient } from './github'
 import GithubCredential from '@/database/github_credential'
 import Repository from '@/database/repository'
+import { getDb } from '@/database/db'
 import { spawn } from 'child_process'
 import { logger } from './logger'
 
@@ -77,6 +78,31 @@ async function getAuthenticatedUrl(
 }
 
 /**
+ * Serialize git operations against the same repository.
+ *
+ * Two layers:
+ * - In-process: callers within the same Node process share one in-flight promise,
+ *   avoiding redundant fetches.
+ * - Cross-process: the API server and the worker may both touch the same repo dir.
+ *   We take a row-level `FOR NO KEY UPDATE` lock on the repositories row inside a
+ *   transaction; the lock auto-releases on commit / rollback / connection drop.
+ *   NO KEY UPDATE is used so FK lookups from other tables (pull_requests, etc.)
+ *   are not blocked by a long fetch.
+ */
+const inflightFetches = new Map<string, Promise<{ commitSha: string; updated: boolean }>>()
+const inflightClones = new Map<string, Promise<{ path: string; alreadyExists: boolean }>>()
+
+async function withRepoRowLock<T>(repository: Repository, fn: () => Promise<T>): Promise<T> {
+  return getDb().transaction(async (tx) => {
+    await Repository.findByPk(repository.id, {
+      lock: tx.LOCK.NO_KEY_UPDATE,
+      transaction: tx,
+    })
+    return fn()
+  })
+}
+
+/**
  * Check if a directory is a git repository
  */
 async function isGitRepository(repoPath: string): Promise<boolean> {
@@ -97,6 +123,23 @@ async function isGitRepository(repoPath: string): Promise<boolean> {
  * @returns Path to the cloned repository
  */
 export async function cloneRepository(
+  credential: GithubCredential,
+  repository: Repository
+): Promise<{
+  path: string
+  alreadyExists: boolean
+}> {
+  const key = repository.storage_path
+  const existing = inflightClones.get(key)
+  if (existing) return existing
+
+  const p = withRepoRowLock(repository, () => doCloneRepository(credential, repository))
+    .finally(() => inflightClones.delete(key))
+  inflightClones.set(key, p)
+  return p
+}
+
+async function doCloneRepository(
   credential: GithubCredential,
   repository: Repository
 ): Promise<{
@@ -142,6 +185,17 @@ export async function cloneRepository(
 }
 
 /**
+ * Delete a repository's working directory from disk.
+ *
+ * Idempotent: missing directories are not treated as an error.
+ */
+export async function deleteRepositoryFromDisk(repository: Repository): Promise<void> {
+  const repoPath = getRepositoryPath(repository.storage_path)
+  logger.info(`Deleting repository directory at ${repoPath}...`)
+  await fs.rm(repoPath, { recursive: true, force: true })
+}
+
+/**
  * Fetch and update repository to latest commit on tracking branch
  *
  * @param credential - GitHub credential for authentication
@@ -149,6 +203,23 @@ export async function cloneRepository(
  * @returns Latest commit SHA
  */
 export async function fetchAndUpdate(
+  credential: GithubCredential,
+  repository: Repository
+): Promise<{
+  commitSha: string
+  updated: boolean
+}> {
+  const key = repository.storage_path
+  const existing = inflightFetches.get(key)
+  if (existing) return existing
+
+  const p = withRepoRowLock(repository, () => doFetchAndUpdate(credential, repository))
+    .finally(() => inflightFetches.delete(key))
+  inflightFetches.set(key, p)
+  return p
+}
+
+async function doFetchAndUpdate(
   credential: GithubCredential,
   repository: Repository
 ): Promise<{
@@ -202,7 +273,7 @@ export async function fetchAndUpdate(
     }
   } catch (error) {
     logger.error(`Failed to fetch and update ${repository.github_owner}/${repository.github_repo}:`, error)
-    throw new Error(`Failed to fetch and update repository: ${(error as Error).message}`)
+    throw error
   }
 }
 
@@ -460,46 +531,4 @@ export async function getRepositoryContent(
   await fs.writeFile(cacheFile, JSON.stringify(files), 'utf-8')
 
   return files
-}
-
-
-/**
- * Ensure a repository is cloned and up to date
- *
- * Convenience function that clones if needed and fetches updates
- *
- * @param credential - GitHub credential
- * @param repository - Repository model instance
- * @returns Repository path and latest commit SHA
- */
-export async function ensureRepositoryUpToDate(
-  credential: GithubCredential,
-  repository: Repository
-): Promise<{
-  path: string
-  commitSha: string
-}> {
-  const repoPath = getRepositoryPath(repository.storage_path)
-
-  if (await isGitRepository(repoPath)) {
-    // Repository exists, fetch and update
-    const { commitSha } = await fetchAndUpdate(credential, repository)
-
-    return {
-      path: repoPath,
-      commitSha,
-    }
-  } else {
-    // Repository doesn't exist, clone it
-    const { path: clonedPath } = await cloneRepository(credential, repository)
-
-    // Get the current commit SHA
-    const git = simpleGit(clonedPath)
-    const commitSha = await git.revparse(['HEAD'])
-
-    return {
-      path: clonedPath,
-      commitSha: commitSha.trim(),
-    }
-  }
 }

@@ -1,10 +1,13 @@
 <template>
-  <SidebarMenu v-if="trackedRepos.length > 0" class="mr-2 mb-3">
+  <SidebarMenu
+    v-if="trackedRepos.length > 0"
+    class="mr-2 mb-3"
+  >
     <SidebarMenuButton
       v-for="repo in sortedRepos"
       :key="repo.id"
-      @click="router.push(`/repositories/${repo.github_owner}/${repo.github_repo}/pulls`)"
       class="py-1 text-xs"
+      @click="router.push(`/repositories/${repo.github_owner}/${repo.github_repo}/pulls`)"
     >
       <Dot /><span>{{ repo.full_name }}</span>
     </SidebarMenuButton>
@@ -12,11 +15,12 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted } from 'vue'
+import { computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { Dot } from 'lucide-vue-next'
 import { SidebarMenu, SidebarMenuButton } from '@/components/ui/sidebar'
 import { useRepo } from './useRepo'
+import { sortBy } from 'lodash-es'
 
 const router = useRouter()
 const repoStore = useRepo()
@@ -24,13 +28,10 @@ if (!repoStore) {
   throw new Error('useRepo must be called within a component that has useProvideRepo')
 }
 
-const { trackedRepos, fetchTrackedRepos } = repoStore
+const { trackedRepos } = repoStore
 
 const sortedRepos = computed(() => {
-  return trackedRepos.value.sort((a, b) => a.full_name.localeCompare(b.full_name))
+  return sortBy(trackedRepos.value, 'full_name')
 })
 
-onMounted(() => {
-  void fetchTrackedRepos()
-})
 </script>

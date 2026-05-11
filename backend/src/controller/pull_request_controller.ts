@@ -24,6 +24,7 @@ import { fetchGithubComments } from '@/module/comment/fetch_github_comments'
 import { getReadCredential, CredentialNotFoundError } from '@/service/github_credential_service'
 import { logger } from '@/service/logger'
 import { syncGithubComments } from '@/module/comment/sync_github_comments'
+import { fetchAndUpdate } from '@/service/git'
 
 const router = express.Router()
 
@@ -188,6 +189,12 @@ router.get('/:id/details', async (req: Request, res: Response) => {
     await pullRequest.reload()
 
     const serializedPR = await serializePullRequest(pullRequest, { includeComments: true })
+
+    // We grab the diff via github API, so here we can simply refresh the repo without waiting it
+    // TODO: Still, this is a bad design
+    if (repository.status === 'cloned') {
+      fetchAndUpdate(credential, repository)
+    }
 
     return res.status(200).json({
       pull_request: serializedPR,

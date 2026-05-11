@@ -5,7 +5,8 @@ import { getRepositories } from '@/service/github'
 import { fetchAllRepositories } from '@/service/github/fetchAllRepositories'
 import Repository from '@/database/repository'
 import RepositoryTracking from '@/database/repository_tracking'
-import { getRepositoryContent, cloneRepository } from '@/service/git'
+import { getRepositoryContent, cloneRepository, deleteRepositoryFromDisk } from '@/service/git'
+import { getDb } from '@/database/db'
 import { assertRepositoryAccessByOwnerRepo } from '@/service/permission_service'
 import { serializeRepositories } from '@/serializer/repository'
 import { Op } from 'sequelize'
@@ -83,18 +84,15 @@ router.post('/:id/untrack', async (req: Request, res: Response) => {
 
     await assertRepositoryAccessByOwnerRepo(user.id, repository.github_owner, repository.github_repo)
 
-    // Find and delete repository trackings for this user
-    const deletedCount = await RepositoryTracking.destroy({
-      where: {
-        repository_id: id,
-      },
-    })
-
-    if (deletedCount === 0) {
-      return res.status(404).json({
-        error: 'Repository tracking not found'
+    await getDb().transaction(async (tx) => {
+      await RepositoryTracking.destroy({
+        where: { repository_id: id },
+        transaction: tx,
       })
-    }
+
+      await repository.destroy({ transaction: tx })
+      await deleteRepositoryFromDisk(repository)
+    })
 
     return res.status(200).json({
       message: 'Repository untracked successfully'
