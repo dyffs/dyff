@@ -21,6 +21,7 @@ export type LLMContentBlock =
   | { type: "text"; text: string }
   | { type: "tool_use"; id: string; name: string; input: Record<string, unknown> }
   | { type: "tool_result"; tool_use_id: string; content: string }
+  | { type: "html"; html: string; title?: string; css?: string }
   | { type: "thinking"; thinking: string }
   | { type: "redacted_thinking"; data: string }
   | { type: "passthrough"; original: Record<string, unknown> };
@@ -100,6 +101,8 @@ export interface ToolResult {
   output: string;
   /** Whether the tool wants to signal an error to the LLM */
   isError?: boolean;
+  /** Optional visualization metadata (e.g. from render_html tool) — stored alongside the tool result for frontend rendering */
+  visualization?: { html: string; title?: string; css?: string };
 }
 
 // ---------------------------------------------------------------------------

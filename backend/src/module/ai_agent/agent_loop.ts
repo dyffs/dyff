@@ -414,17 +414,28 @@ export class AgentLoop {
       value: result.output,
     }];
 
+    const enriched: LLMContentBlock[] = [
+      {
+        type: "tool_result",
+        tool_use_id: toolCallId,
+        content: result.output,
+      },
+    ];
+
+    if (result.visualization) {
+      enriched.push({
+        type: "html",
+        html: result.visualization.html,
+        title: result.visualization.title,
+        css: result.visualization.css,
+      });
+    }
+
     const message: StoredMessage = {
       id: generateId(),
       role: "tool_result",
       raw: result.output,
-      enriched: [
-        {
-          type: "tool_result",
-          tool_use_id: toolCallId,
-          content: result.output,
-        },
-      ],
+      enriched,
       metadata: {
         generatedAt: new Date().toISOString(),
         commitHash: session.commitHash,
@@ -475,7 +486,7 @@ export class AgentLoop {
       .filter((m) => !m.metadata.cancelled)
       .map((m) => ({
         role: m.role,
-        content: m.enriched,
+        content: m.enriched.filter((b) => b.type !== "html"),
       }));
   }
 
@@ -504,6 +515,7 @@ export class AgentLoop {
       .map((b) => {
         if (b.type === "text") return b.text;
         if (b.type === "tool_use") return `[tool_call: ${b.name}]`;
+        if (b.type === "html") return `[visualization${b.title ? `: ${b.title}` : ""}]`;
         if (b.type === "thinking") return `[thinking]`;
         if (b.type === "redacted_thinking") return `[redacted_thinking]`;
         return "";

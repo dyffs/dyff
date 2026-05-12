@@ -9,6 +9,7 @@ import { listFilesHandler, readFileHandler, searchFilesHandler } from "../tools/
 import { diffOverviewHandler, diffContentHandler } from "../tools/diff_tool";
 import { searchCodeHandler } from "../tools/search_tool";
 import { reviewNotesHandler } from "../tools/review_notes_tool";
+import { renderHtmlHandler } from "../tools/render_html_tool";
 import { buildClientForTeam } from "../llms/llm_resolver";
 import { updateJobWithChatSession } from './utils'
 
@@ -35,6 +36,7 @@ function buildAgentBlueprintFromSession(sessionModel: ChatSessionModel, user: Us
       diffContentHandler,
       searchCodeHandler,
       reviewNotesHandler,
+      renderHtmlHandler,
     ],
     maxTurns: 100,
     maxTokens: 2_000_000,
