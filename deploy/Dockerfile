@@ -11,6 +11,8 @@ COPY frontend/package.json frontend/pnpm-lock.yaml* ./
 RUN pnpm install --frozen-lockfile || pnpm install
 
 COPY frontend/ ./
+# Shared types live one level up (resolved via tsconfig paths "@@/*": ["../shared/*"])
+COPY shared/ /shared/
 
 # Same-origin: nginx proxies /api -> backend. Mode is self_hosted.
 ENV VITE_API_URL=/api
@@ -72,6 +74,8 @@ COPY backend/package.json ./package.json
 COPY backend/tsconfig.json ./tsconfig.json
 COPY backend/src ./src
 COPY backend/prompts ./prompts
+# Shared types resolved via tsconfig paths "@@/*": ["../shared/*"]
+COPY shared/ /shared/
 
 # Helper scripts
 COPY deploy/bin /app/bin
