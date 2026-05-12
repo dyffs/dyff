@@ -38,9 +38,13 @@ const app = express()
 
 app.use(compression())
 
-// CORS middleware - must be first
+const corsOrigins = (process.env.CORS_ORIGINS || process.env.FRONTEND_URL || 'http://localhost:5173')
+  .split(',')
+  .map((s) => s.trim())
+  .filter(Boolean)
+
 app.use(cors({
-  origin: ['http://localhost:5173', 'http://100.116.33.14:5173'],
+  origin: corsOrigins,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
   credentials: true,
   allowedHeaders: ['Content-Type', 'Authorization'],

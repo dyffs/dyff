@@ -4,9 +4,6 @@
 
 import { createLogger, format, transports, Logger } from "winston";
 
-const ENABLED =
-  process.env.AGENT_DEBUG === "1" || process.env.AGENT_DEBUG === "true";
-
 const LOG_PATH = process.env.AGENT_DEBUG_LOG ?? "./logs/agent_debug.log";
 
 function truncate(text: string, max = 200): string {
@@ -31,7 +28,7 @@ class AgentDebugLogger {
   private logger: Logger | null;
 
   constructor() {
-    this.logger = ENABLED ? createWinstonLogger() : null;
+    this.logger = createWinstonLogger();
   }
 
   get enabled(): boolean {

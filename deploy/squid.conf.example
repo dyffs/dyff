@@ -1,0 +1,38 @@
+# Squid egress allowlist for Dyff.
+#
+# Only the destinations listed below can be reached through this proxy.
+# Edit the dstdomain ACL to fit your environment, then restart the proxy:
+#   ./setup.sh restart
+#
+# The Dyff container is configured with HTTP_PROXY=http://squid:3128 when
+# the proxy is enabled, so all outbound requests originate here.
+
+http_port 3128
+
+acl localnet src 0.0.0.0/0
+acl SSL_ports port 443
+acl Safe_ports port 80
+acl Safe_ports port 443
+acl CONNECT method CONNECT
+
+# --- Allowed destinations ---
+acl allowed_domains dstdomain .openai.com
+acl allowed_domains dstdomain .anthropic.com
+acl allowed_domains dstdomain .googleapis.com
+acl allowed_domains dstdomain .x.ai
+acl allowed_domains dstdomain .github.com
+acl allowed_domains dstdomain .githubusercontent.com
+acl allowed_domains dstdomain .exa.ai
+
+http_access deny !Safe_ports
+http_access deny CONNECT !SSL_ports
+
+http_access allow localnet allowed_domains
+http_access deny all
+
+# Minimal logging to stdout/stderr for `docker logs`
+access_log stdio:/dev/stdout squid
+cache_log /dev/stderr
+
+# No on-disk cache
+cache deny all

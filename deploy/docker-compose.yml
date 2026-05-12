@@ -1,0 +1,64 @@
+name: dyff
+
+services:
+  dyff:
+    image: ${DYFF_IMAGE:-dyffs/dyff:latest}
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      DB_HOST: ${DB_HOST:-postgres}
+      DB_PORT: ${DB_PORT:-5432}
+      REDIS_HOST: ${REDIS_HOST:-redis}
+      REDIS_PORT: ${REDIS_PORT:-6379}
+      # Route outbound HTTP(S) through Squid when the proxy profile is active.
+      # Leave blank by default; setup.sh fills these in if the user opts in.
+      HTTP_PROXY: ${HTTP_PROXY:-}
+      HTTPS_PROXY: ${HTTPS_PROXY:-}
+      NO_PROXY: ${NO_PROXY:-localhost,127.0.0.1,postgres,redis}
+    ports:
+      - "${DYFF_PORT:-3000}:80"
+    volumes:
+      - git_data:/data/git_repos
+      - asset_data:/data/github_assets
+      - dyff_logs:/var/log/dyff
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_started
+
+  postgres:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${DB_USER:-dyff}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:?DB_PASSWORD is required}
+      POSTGRES_DB: ${DB_NAME:-dyff}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-dyff} -d ${DB_NAME:-dyff}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    command: ["redis-server", "--save", "", "--appendonly", "no"]
+
+  # Optional: egress proxy that whitelists outbound domains.
+  # Enable with `docker compose --profile proxy up -d` (setup.sh wires this up).
+  squid:
+    image: ubuntu/squid:latest
+    profiles: ["proxy"]
+    restart: unless-stopped
+    volumes:
+      - ./squid.conf:/etc/squid/squid.conf:ro
+
+volumes:
+  postgres_data:
+  git_data:
+  asset_data:
+  dyff_logs:
