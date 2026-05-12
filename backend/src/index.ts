@@ -10,10 +10,6 @@ import '@/service/github_credential_service'
 import authController from '@/controller/auth_controller'
 import { isSaaS, isSelfHosted, getDeploymentMode } from './service/deployment'
 
-if (!process.env.GITHUB_APP_ID || !process.env.GITHUB_APP_PRIVATE_KEY) {
-  logger.warn('GITHUB_APP_ID or GITHUB_APP_PRIVATE_KEY not set. GitHub App auth will not work. PAT only.')
-}
-
 import { authMiddleware } from './middleware/auth'
 import passport from 'passport'
 
@@ -38,7 +34,7 @@ const app = express()
 
 app.use(compression())
 
-const corsOrigins = (process.env.CORS_ORIGINS || process.env.FRONTEND_URL || 'http://localhost:5173')
+const corsOrigins = process.env.FRONTEND_URL || 'http://localhost:5173'
   .split(',')
   .map((s) => s.trim())
   .filter(Boolean)
