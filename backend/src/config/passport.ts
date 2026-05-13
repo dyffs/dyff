@@ -11,12 +11,6 @@ const GITHUB_CLIENT_ID = process.env.GITHUB_CLIENT_ID!
 const GITHUB_CLIENT_SECRET = process.env.GITHUB_CLIENT_SECRET!
 const GITHUB_CALLBACK_URL = process.env.GITHUB_CALLBACK_URL || 'http://localhost:3003/api/auth/github/callback'
 
-// Only enforce GitHub OAuth env in SaaS mode. Self-hosted deployments don't
-// use OAuth; they authenticate users via email+password.
-if (isSaaS() && (!GITHUB_CLIENT_ID || !GITHUB_CLIENT_SECRET)) {
-  throw new Error('GITHUB_CLIENT_ID and GITHUB_CLIENT_SECRET must be set in environment')
-}
-
 // Helper to fetch user email from GitHub API
 async function fetchGitHubEmail(accessToken: string): Promise<string | null> {
   try {
@@ -48,31 +42,37 @@ async function fetchGitHubEmail(accessToken: string): Promise<string | null> {
   }
 }
 
-// Custom GitHub strategy that doesn't try to fetch emails automatically
-const githubStrategy = new GitHubStrategy(
-  {
-    clientID: GITHUB_CLIENT_ID,
-    clientSecret: GITHUB_CLIENT_SECRET,
-    callbackURL: GITHUB_CALLBACK_URL,
-    // Reads go through the GitHub App installation; the OAuth token is only
-    // used for writing comments under the user's identity. Narrowed scope.
-    // If private-repo comment writes require more, add 'public_repo' or
-    // escalate based on observed 403s.
-    scope: ['user:email', 'read:user'],
-  },
-  async (accessToken: string, refreshToken: string, profile: any, done: any) => {
-    try {
-      const githubId = profile.id
-      const githubUsername = profile.username
+// GitHub OAuth is only used in SaaS mode. Self-hosted deployments authenticate
+// users via email + password, so we skip strategy registration entirely.
+if (isSaaS()) {
+  if (!GITHUB_CLIENT_ID || !GITHUB_CLIENT_SECRET) {
+    throw new Error('GITHUB_CLIENT_ID and GITHUB_CLIENT_SECRET must be set in environment')
+  }
 
-      // Try to get email from profile, otherwise fetch from API
-      let email = profile.emails?.[0]?.value
-      if (!email) {
-        email = await fetchGitHubEmail(accessToken)
-      }
-      email = email || `${githubUsername}@github.local`
+  const githubStrategy = new GitHubStrategy(
+    {
+      clientID: GITHUB_CLIENT_ID,
+      clientSecret: GITHUB_CLIENT_SECRET,
+      callbackURL: GITHUB_CALLBACK_URL,
+      // Reads go through the GitHub App installation; the OAuth token is only
+      // used for writing comments under the user's identity. Narrowed scope.
+      // If private-repo comment writes require more, add 'public_repo' or
+      // escalate based on observed 403s.
+      scope: ['user:email', 'read:user'],
+    },
+    async (accessToken: string, refreshToken: string, profile: any, done: any) => {
+      try {
+        const githubId = profile.id
+        const githubUsername = profile.username
 
-      const displayName = profile.displayName || githubUsername
+        // Try to get email from profile, otherwise fetch from API
+        let email = profile.emails?.[0]?.value
+        if (!email) {
+          email = await fetchGitHubEmail(accessToken)
+        }
+        email = email || `${githubUsername}@github.local`
+
+        const displayName = profile.displayName || githubUsername
 
         // Try to find existing user by github_username
         let user = await User.findOne({
@@ -145,34 +145,35 @@ const githubStrategy = new GitHubStrategy(
     }
   )
 
-// Override userProfile to skip email fetching (we do it ourselves)
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-githubStrategy.userProfile = function(accessToken: string, done: (err?: Error | null, profile?: any) => void) {
-  this._oauth2.get('https://api.github.com/user', accessToken, (err, body) => {
-    if (err) {
-      return done(new Error('Failed to fetch user profile'))
-    }
-
-    try {
-      const json = JSON.parse(body as string)
-      const profile: any = {
-        provider: 'github',
-        id: json.id,
-        displayName: json.name,
-        username: json.login,
-        emails: json.email ? [{ value: json.email }] : [],
-        photos: json.avatar_url ? [{ value: json.avatar_url }] : [],
-        _raw: body,
-        _json: json,
+  // Override userProfile to skip email fetching (we do it ourselves)
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  githubStrategy.userProfile = function (accessToken: string, done: (err?: Error | null, profile?: any) => void) {
+    this._oauth2.get('https://api.github.com/user', accessToken, (err, body) => {
+      if (err) {
+        return done(new Error('Failed to fetch user profile'))
       }
-      done(null, profile)
-    } catch (e) {
-      done(new Error('Failed to parse user profile'))
-    }
-  })
-}
 
-passport.use(githubStrategy)
+      try {
+        const json = JSON.parse(body as string)
+        const profile: any = {
+          provider: 'github',
+          id: json.id,
+          displayName: json.name,
+          username: json.login,
+          emails: json.email ? [{ value: json.email }] : [],
+          photos: json.avatar_url ? [{ value: json.avatar_url }] : [],
+          _raw: body,
+          _json: json,
+        }
+        done(null, profile)
+      } catch (e) {
+        done(new Error('Failed to parse user profile'))
+      }
+    })
+  }
+
+  passport.use(githubStrategy)
+}
 
 // Serialize user for session (not used with JWT but required by passport)
 passport.serializeUser((user: any, done) => {
