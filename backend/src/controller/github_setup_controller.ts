@@ -3,7 +3,6 @@ import { Octokit } from '@octokit/rest'
 import GithubCredential from '@/database/github_credential'
 import { requestContext } from '@/service/requestContext'
 import { logger } from '@/service/logger'
-import { isSaaS, isSelfHosted } from '@/service/deployment'
 import User from '@/database/user'
 
 const router = express.Router()
@@ -19,33 +18,32 @@ router.get('/status', async (req: Request, res: Response) => {
     let teamConnected: boolean
     let userPatUsedForTeam: boolean | undefined
 
-    if (isSaaS()) {
-      const userOAuth = await GithubCredential.findOne({
-        where: { kind: 'oauth_user', user_id: user.id },
-      })
-      userConnected = !!userOAuth
+    // TODO: [app]
+    // const userOAuth = await GithubCredential.findOne({
+    //   where: { kind: 'oauth_user', user_id: user.id },
+    // })
+    // userConnected = !!userOAuth
 
-      const teamInstall = await GithubCredential.findOne({
-        where: { kind: 'github_app_installation', team_id: user.team_id },
-      })
-      teamConnected = !!teamInstall
-    } else {
-      const userPat = await GithubCredential.findOne({
-        where: { kind: 'pat', user_id: user.id, account_type: 'User' },
-      })
-      userConnected = !!userPat
+    // const teamInstall = await GithubCredential.findOne({
+    //   where: { kind: 'github_app_installation', team_id: user.team_id },
+    // })
+    // teamConnected = !!teamInstall
 
-      const teamPat = await GithubCredential.findOne({
-        where: { kind: 'pat', team_id: user.team_id, account_type: 'Organization' },
-      })
-      teamConnected = !!teamPat
+    const userPat = await GithubCredential.findOne({
+      where: { kind: 'pat', user_id: user.id, account_type: 'User' },
+    })
+    userConnected = !!userPat
 
-      userPatUsedForTeam =
-        !!userPat && !!teamPat && userPat.access_token === teamPat.access_token
-    }
+    const teamPat = await GithubCredential.findOne({
+      where: { kind: 'pat', team_id: user.team_id, account_type: 'Organization' },
+    })
+    teamConnected = !!teamPat
+
+    userPatUsedForTeam =
+      !!userPat && !!teamPat && userPat.access_token === teamPat.access_token
 
     return res.status(200).json({
-      mode: isSaaS() ? 'saas' : 'self_hosted',
+      mode: 'pat',
       user_connected: userConnected,
       team_connected: teamConnected,
       ...(userPatUsedForTeam !== undefined && {
@@ -67,12 +65,6 @@ router.get('/status', async (req: Request, res: Response) => {
 // 'Organization') so other teammates inherit access via getReadCredential.
 router.post('/personal_access_token', async (req: Request, res: Response) => {
   try {
-    if (!isSelfHosted()) {
-      return res.status(400).json({
-        error: 'Personal Access Tokens are only used in self-hosted mode.',
-      })
-    }
-
     const user = requestContext.currentUser()
     const { personal_access_token, for_team } = req.body ?? {}
 
@@ -147,13 +139,8 @@ router.post('/disconnect', async (req: Request, res: Response) => {
     const user = requestContext.currentUser()
     const { for_team } = req.body ?? {}
 
-    // TODO: for saas mode, the deletion should happen at the Github side by uninstalling the app.
+    // TODO: [app]
     if (for_team) {
-      if (!isSelfHosted()) {
-        return res.status(400).json({
-          error: 'Team disconnect is only supported in self-hosted mode.',
-        })
-      }
       if (user.role !== 'admin') {
         return res.status(403).json({
           error: 'Only admins can disconnect the team Personal Access Token.',
@@ -185,9 +172,8 @@ router.post('/disconnect', async (req: Request, res: Response) => {
       })
     }
 
-    const where = isSaaS()
-      ? { kind: 'oauth_user' as const, user_id: user.id }
-      : { kind: 'pat' as const, user_id: user.id, account_type: 'User' as const }
+    // TODO: [app]
+    const where = { kind: 'pat' as const, user_id: user.id, account_type: 'User' as const }
 
     const deleted = await GithubCredential.destroy({ where })
 

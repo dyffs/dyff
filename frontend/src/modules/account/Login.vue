@@ -6,12 +6,11 @@
           Welcome to Dyff
         </h1>
         <p class="text-sm text-muted-foreground">
-          {{ selfHosted ? 'Sign in with your email to continue' : 'Sign in with your GitHub account to continue' }}
+          Sign in with your email to continue
         </p>
       </div>
 
       <form
-        v-if="selfHosted"
         class="space-y-4"
         @submit.prevent="loginWithEmail"
       >
@@ -46,7 +45,8 @@
         </Button>
       </form>
 
-      <Button
+      <!-- TODO: [app] -->
+      <!-- <Button
         v-else
         :disabled="isLoading"
         class="w-full"
@@ -58,7 +58,7 @@
           class="mr-2 h-6 w-6"
         >
         {{ isLoading ? 'Signing in...' : 'Continue with GitHub' }}
-      </Button>
+      </Button> -->
     </div>
   </div>
 </template>
@@ -71,22 +71,21 @@ import { shallowRef, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useProvideAccount } from './useAccount'
 import { toast } from 'vue-sonner'
-import { isSelfHostedMode } from '@/lib/utils'
 import apiClient from '@/modules/apiClient'
 
 const router = useRouter()
 const route = useRoute()
 const { handleAuthCallback, fetchAccount, getToken } = useProvideAccount()
 const isLoading = shallowRef(false)
-const selfHosted = isSelfHostedMode()
 const email = shallowRef('')
 const password = shallowRef('')
 
-function loginWithGithub () {
-  isLoading.value = true
-  const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:3003/api'
-  window.location.href = `${apiUrl}/auth/github`
-}
+// TODO: [app]
+// function loginWithGithub () {
+//   isLoading.value = true
+//   const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:3003/api'
+//   window.location.href = `${apiUrl}/auth/github`
+// }
 
 async function loginWithEmail () {
   isLoading.value = true

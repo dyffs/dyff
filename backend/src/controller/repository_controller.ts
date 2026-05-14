@@ -5,7 +5,8 @@ import { getRepositories } from '@/service/github'
 import { fetchAllRepositories } from '@/service/github/fetchAllRepositories'
 import Repository from '@/database/repository'
 import RepositoryTracking from '@/database/repository_tracking'
-import { getRepositoryContent, cloneRepository, deleteRepositoryFromDisk } from '@/service/git'
+import { getRepositoryContent, deleteRepositoryFromDisk } from '@/service/git'
+import { initRepo } from '@/service/init_repo'
 import { getDb } from '@/database/db'
 import { assertRepositoryAccessByOwnerRepo } from '@/service/permission_service'
 import { serializeRepositories } from '@/serializer/repository'
@@ -414,20 +415,7 @@ router.post('/:owner/:repo/clone', async (req: Request, res: Response) => {
     repository.status = 'cloning'
     await repository.save()
 
-    // Trigger clone operation asynchronously
-    cloneRepository(credential, repository)
-      .then(async () => {
-        // Update status to 'cloned' on success
-        repository.status = 'cloned'
-        await repository.save()
-        logger.info(`Successfully cloned ${owner}/${repo}`)
-      })
-      .catch(async (error) => {
-        // Reset status to 'new' on failure so it can be retried
-        logger.error(`Failed to clone ${owner}/${repo}:`, error)
-        repository.status = 'new'
-        await repository.save()
-      })
+    await initRepo(credential, repository)
 
     // Return immediately with cloning status
     return res.status(202).json({

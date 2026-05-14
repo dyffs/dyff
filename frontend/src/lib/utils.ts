@@ -104,10 +104,6 @@ export function getTimeAgo (d: Date | null | string): string {
   return 'recently'
 }
 
-export function isSelfHostedMode () {
-  return import.meta.env.VITE_DEPLOYMENT_MODE === 'self_hosted'
-}
-
 export function friendlyDate (d: Date | null | string): string {
   if (!d) return ''
   

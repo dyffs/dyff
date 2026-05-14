@@ -205,12 +205,11 @@ import {
 } from '@/components/ui/alert-dialog'
 import { useProvideTeam } from './useTeam'
 import { useAccount } from '../account/useAccount'
-import { isSelfHostedMode, friendlyDate } from '@/lib/utils'
+import { friendlyDate } from '@/lib/utils'
 import InviteUserDialog from './InviteUserDialog.vue'
 import EditUserDialog from './EditUserDialog.vue'
 import type { TeamUser } from './types'
 
-const router = useRouter()
 const { user: currentUser } = useAccount()!
 const { users, isLoading, isDeleting, fetchUsers, deleteUser, updateUser } = useProvideTeam()
 
@@ -263,10 +262,6 @@ async function handleDelete () {
 }
 
 onMounted(() => {
-  if (!isSelfHostedMode()) {
-    void router.replace('/repositories')
-    return
-  }
   void fetchUsers()
 })
 </script>

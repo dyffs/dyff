@@ -4,7 +4,7 @@ import User from '@/database/user'
 import Team from '@/database/team'
 import GithubCredential from '@/database/github_credential'
 import { generateTeamName } from '@/service/utils'
-import { isSaaS } from '@/service/deployment'
+import { isSelfHosted } from '@/service/deployment'
 import { logger } from '@/service/logger'
 
 const GITHUB_CLIENT_ID = process.env.GITHUB_CLIENT_ID!
@@ -44,7 +44,7 @@ async function fetchGitHubEmail(accessToken: string): Promise<string | null> {
 
 // GitHub OAuth is only used in SaaS mode. Self-hosted deployments authenticate
 // users via email + password, so we skip strategy registration entirely.
-if (isSaaS()) {
+if (!isSelfHosted()) {
   if (!GITHUB_CLIENT_ID || !GITHUB_CLIENT_SECRET) {
     throw new Error('GITHUB_CLIENT_ID and GITHUB_CLIENT_SECRET must be set in environment')
   }

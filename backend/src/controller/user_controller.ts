@@ -6,7 +6,6 @@ import Team from '@/database/team'
 import GithubCredential from '@/database/github_credential'
 import { requestContext } from '@/service/requestContext'
 import { logger } from '@/service/logger'
-import { isSelfHosted } from '@/service/deployment'
 
 const router = express.Router()
 
@@ -77,12 +76,9 @@ router.get('/', async (req: Request, res: Response) => {
   }
 })
 
-// POST /invite - Admin invites a new user (self-host only)
+// TODO: support login with github later
 router.post('/invite', async (req: Request, res: Response) => {
   try {
-    if (!isSelfHosted()) {
-      return res.status(404).json({ error: 'Not found' })
-    }
 
     const currentUser = requestContext.currentUser()
     if (!currentUser || currentUser.role !== 'admin') {

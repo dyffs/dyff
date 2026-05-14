@@ -39,7 +39,6 @@
 
       <!-- GitHub Connection Card -->
       <Card
-        v-if="isSelfHostedMode()"
         class="gap-2 rounded-lg"
       >
         <CardHeader>
@@ -157,7 +156,6 @@ import { toast } from 'vue-sonner'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
-import { isSelfHostedMode } from '@/lib/utils'
 import {
   AlertDialog,
   AlertDialogAction,

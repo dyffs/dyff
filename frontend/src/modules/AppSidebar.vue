@@ -66,10 +66,9 @@ import {
   SidebarMenuItem,
 } from '@/components/ui/sidebar'
 import { useAccount } from './account/useAccount'
-import { isSelfHostedMode } from '@/lib/utils'
 
 const router = useRouter()
 const { user } = useAccount()!
-const showTeam = computed(() => isSelfHostedMode() && user.value?.role === 'admin')
-const showGithubSetup = computed(() => isSelfHostedMode() && user.value?.role === 'admin')
+const showTeam = computed(() => user.value?.role === 'admin')
+const showGithubSetup = computed(() => user.value?.role === 'admin')
 </script>

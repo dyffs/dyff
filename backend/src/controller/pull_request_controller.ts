@@ -19,12 +19,11 @@ import {
 import { serializePullRequests, serializePullRequest } from '@/serializer/pull_request'
 import { StoredReview, StoredTimelineEvent } from '@/types'
 import { reverse } from 'lodash'
-import { syncGithubCommentsToComments } from '@/module/comment/sync_to_comments'
-import { fetchGithubComments } from '@/module/comment/fetch_github_comments'
 import { getReadCredential, CredentialNotFoundError } from '@/service/github_credential_service'
 import { logger } from '@/service/logger'
 import { syncGithubComments } from '@/module/comment/sync_github_comments'
 import { fetchAndUpdate } from '@/service/git'
+import { initRepo } from '@/service/init_repo'
 
 const router = express.Router()
 
@@ -194,6 +193,8 @@ router.get('/:id/details', async (req: Request, res: Response) => {
     // TODO: Still, this is a bad design
     if (repository.status === 'cloned') {
       fetchAndUpdate(credential, repository)
+    } else {
+      initRepo(credential, repository)
     }
 
     return res.status(200).json({

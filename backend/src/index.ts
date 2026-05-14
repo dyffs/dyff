@@ -8,7 +8,7 @@ import { logger } from './service/logger'
 import '@/config/passport'
 import '@/service/github_credential_service'
 import authController from '@/controller/auth_controller'
-import { isSaaS, isSelfHosted, getDeploymentMode } from './service/deployment'
+import { isSelfHosted, getDeploymentMode } from './service/deployment'
 
 import { authMiddleware } from './middleware/auth'
 import passport from 'passport'
@@ -63,11 +63,11 @@ app.use(express.urlencoded({
 logger.info(`Starting in deployment mode: ${getDeploymentMode()}`)
 
 // Webhook route runs before auth middleware; it verifies via HMAC signature.
-if (isSaaS()) {
+if (!isSelfHosted()) {
   app.use('/api/webhooks/github', githubAppWebhookRouter)
 }
 
-if (isSaaS()) {
+if (!isSelfHosted()) {
   app.use(passport.initialize())
   app.use('/api/auth', authController)
 

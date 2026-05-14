@@ -1,6 +1,5 @@
 import GithubCredential from '@/database/github_credential'
 import User from '@/database/user'
-import { isSaaS } from './deployment'
 import { logger } from './logger'
 
 export class CredentialNotFoundError extends Error {
@@ -20,26 +19,25 @@ export class CredentialNotFoundError extends Error {
  * Self-hosted: team PAT preferred, user PAT fallback.
  */
 export async function getReadCredential(user: User): Promise<GithubCredential> {
-  if (isSaaS()) {
-    const teamInstall = await GithubCredential.findOne({
-      where: { kind: 'github_app_installation', team_id: user.team_id },
-    })
-    if (teamInstall) return teamInstall
+  // TODO: [app]
+  // const teamInstall = await GithubCredential.findOne({
+  //   where: { kind: 'github_app_installation', team_id: user.team_id },
+  // })
+  // if (teamInstall) return teamInstall
 
-    const userOAuth = await GithubCredential.findOne({
-      where: { kind: 'oauth_user', user_id: user.id },
-    })
-    if (userOAuth) {
-      logger.warn(
-        `Falling back to oauth_user read credential for user ${user.id}; team ${user.team_id} has no GitHub App installation.`
-      )
-      return userOAuth
-    }
+  // const userOAuth = await GithubCredential.findOne({
+  //   where: { kind: 'oauth_user', user_id: user.id },
+  // })
+  // if (userOAuth) {
+  //   logger.warn(
+  //     `Falling back to oauth_user read credential for user ${user.id}; team ${user.team_id} has no GitHub App installation.`
+  //   )
+  //   return userOAuth
+  // }
 
-    throw new CredentialNotFoundError(
-      'No GitHub App installation for this team. Install the Dyff GitHub App to continue.'
-    )
-  }
+  // throw new CredentialNotFoundError(
+  //   'No GitHub App installation for this team. Install the Dyff GitHub App to continue.'
+  // )
 
   const teamPat = await GithubCredential.findOne({
     where: { kind: 'pat', team_id: user.team_id, account_type: 'Organization' },
@@ -63,14 +61,13 @@ export async function getReadCredential(user: User): Promise<GithubCredential> {
  * Self-hosted: user PAT preferred, team PAT fallback.
  */
 export async function getWriteCredential(user: User): Promise<GithubCredential> {
-  if (isSaaS()) {
-    const userOAuth = await GithubCredential.findOne({
-      where: { kind: 'oauth_user', user_id: user.id },
-    })
-    if (userOAuth) return userOAuth
+  // TODO: [app]
+  // const userOAuth = await GithubCredential.findOne({
+  //   where: { kind: 'oauth_user', user_id: user.id },
+  // })
+  // if (userOAuth) return userOAuth
 
-    throw new CredentialNotFoundError('GitHub login required to post comments.')
-  }
+  // throw new CredentialNotFoundError('GitHub login required to post comments.')
 
   const userPat = await GithubCredential.findOne({
     where: { kind: 'pat', user_id: user.id, account_type: 'User' },
