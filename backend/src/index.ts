@@ -27,8 +27,7 @@ import passwordAuthController from './controller/password_auth_controller'
 import githubSetupController from './controller/github_setup_controller'
 import { githubAppAuthRouter, githubAppWebhookRouter } from './controller/github_app_controller'
 
-import { sync, getDb } from './database/db'
-import { runStartupInit } from './service/startup'
+import { getDb } from './database/db'
 
 const app = express()
 
@@ -109,13 +108,9 @@ const PORT = 3003
 
 const server = createServer(app)
 
-server.listen(PORT, '0.0.0.0', async () => {
+server.listen({ port: PORT, host: '0.0.0.0', reusePort: true }, async () => {
   try {
-    // sync()
     getDb()
-    if (isSelfHosted()) {
-      await runStartupInit()
-    }
     logger.info(`Server listening on port ${PORT}`)
   } catch (error) {
     logger.error('Failed to start server:', error)
