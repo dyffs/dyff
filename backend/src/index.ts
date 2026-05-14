@@ -34,13 +34,13 @@ const app = express()
 
 app.use(compression())
 
-const corsOrigins = process.env.FRONTEND_URL || 'http://localhost:5173'
-  .split(',')
+const corsOrigins = process.env.CORS_ORIGINS
+  ?.split(',')
   .map((s) => s.trim())
-  .filter(Boolean)
+  .filter(Boolean) || []
 
 app.use(cors({
-  origin: corsOrigins,
+  origin: [...corsOrigins, process.env.FRONTEND_URL ?? 'http://localhost:5173'],
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
   credentials: true,
   allowedHeaders: ['Content-Type', 'Authorization'],
