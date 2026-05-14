@@ -1,4 +1,5 @@
 import process from 'node:process'
+import cluster from 'node:cluster'
 import { createServer } from 'http'
 import express from 'express'
 import cors from 'cors'
@@ -105,20 +106,29 @@ app.use((err: Error, req: express.Request, res: express.Response, next: express.
 })
 
 const PORT = 3003
+const WORKERS = Number(process.env.WEB_CONCURRENCY ?? 1)
 
-const server = createServer(app)
-
-server.listen({ port: PORT, host: '0.0.0.0', reusePort: true }, async () => {
-  try {
-    getDb()
-    logger.info(`Server listening on port ${PORT}`)
-  } catch (error) {
-    logger.error('Failed to start server:', error)
-  }
-})
+if (cluster.isPrimary) {
+  logger.info(`Primary ${process.pid} forking ${WORKERS} workers`)
+  for (let i = 0; i < WORKERS; i++) cluster.fork()
+  cluster.on('exit', (worker, code, signal) => {
+    logger.warn(`Worker ${worker.process.pid} exited (${signal || code}); respawning`)
+    cluster.fork()
+  })
+} else {
+  const server = createServer(app)
+  server.listen(PORT, '0.0.0.0', () => {
+    try {
+      getDb()
+      logger.info(`Worker ${process.pid} listening on port ${PORT}`)
+    } catch (error) {
+      logger.error('Failed to start server:', error)
+    }
+  })
+}
 
 process.on('SIGINT', () => {
-  logger.info('SIGINT signal received')
+  logger.info(`SIGINT received (pid ${process.pid})`)
   process.exit(0)
 })
 
