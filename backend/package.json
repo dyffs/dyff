@@ -10,7 +10,8 @@
     "dev-worker": "bun --watch src/job_worker.ts",
     "build": "rm -rf ./dist && tsc -p tsconfig.json --outDir ./dist && tsc-alias -p tsconfig.json --outDir ./dist",
     "deploy-web": "bun run src/index.ts",
-    "deploy-worker": "bun run src/job_worker.ts"
+    "deploy-worker": "bun run src/job_worker.ts",
+    "migrate": "bun run src/cli/migrate.ts"
   },
   "keywords": [],
   "author": "",
