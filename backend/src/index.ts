@@ -75,9 +75,8 @@ if (!isSelfHosted()) {
   app.use('/api/auth/github', githubAppAuthRouter)
 }
 
-if (isSelfHosted()) {
-  app.use('/api/auth', passwordAuthController)
-}
+// TODO: [app] 
+app.use('/api/auth', passwordAuthController)
 
 app.use(authMiddleware)
 

@@ -1,12 +1,13 @@
 /* eslint-disable @typescript-eslint/prefer-promise-reject-errors */
 import axios from 'axios'
-import { toast } from 'vue-sonner'
 
 const resolveBaseURL = () => {
   if (import.meta.env.VITE_API_URL) return import.meta.env.VITE_API_URL
+
   if (typeof window !== 'undefined' && window.location?.hostname) {
     return `${window.location.protocol}//${window.location.hostname}:3003/api`
   }
+
   return 'http://localhost:3003/api'
 }
 
