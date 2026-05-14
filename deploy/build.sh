@@ -4,8 +4,8 @@
 # Local usage:
 #   ./deploy/build.sh              # build + push :<git-sha> and :latest (amd64)
 #   PUSH=0 ./deploy/build.sh       # build but do not push (loads into local docker)
-#   PLATFORMS=linux/amd64,linux/arm64 ./deploy/build.sh
-#   TAG=v0.3.0 ./deploy/build.sh
+# 
+#   IMAGE=ghcr.io/dyffs/dyff  TAG=v0.0.2  PLATFORMS=linux/amd64,linux/arm64 ./deploy/build.sh
 #
 # In CI: the same script works; just `docker login` beforehand.
 

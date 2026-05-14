@@ -1,13 +1,17 @@
 # syntax=docker/dockerfile:1.7
 
+
 # ---------- Stage 1: build frontend ----------
-FROM node:20-alpine AS frontend-builder
+FROM node:24-alpine AS frontend-builder
 
 RUN corepack enable
 
+# Tell pnpm we're non-interactive so it won't prompt before purging node_modules
+ENV CI=true
+
 WORKDIR /build
 
-COPY frontend/package.json frontend/pnpm-lock.yaml* ./
+COPY frontend/package.json frontend/pnpm-lock.yaml frontend/pnpm-workspace.yaml ./
 RUN pnpm install --frozen-lockfile || pnpm install
 
 COPY frontend/ ./
@@ -16,7 +20,6 @@ COPY shared/ /shared/
 
 # Same-origin: nginx proxies /api -> backend. Mode is self_hosted.
 ENV VITE_API_URL=/api
-ENV VITE_DEPLOYMENT_MODE=self_hosted
 
 RUN pnpm run build
 
@@ -74,6 +77,7 @@ COPY backend/package.json ./package.json
 COPY backend/tsconfig.json ./tsconfig.json
 COPY backend/src ./src
 COPY backend/prompts ./prompts
+COPY backend/resource ./resource
 # Shared types resolved via tsconfig paths "@@/*": ["../shared/*"]
 COPY shared/ /shared/
 
@@ -113,3 +117,5 @@ ENV NODE_ENV=production \
 EXPOSE 80
 
 ENTRYPOINT ["/init"]
+
+LABEL org.opencontainers.image.source https://github.com/dyffs/dyff
