@@ -32,8 +32,6 @@ router.get('/my-account', async (req: Request, res: Response) => {
       return res.status(401).json({ error: 'Unauthorized' })
     }
 
-    const team = await Team.findByPk(user.team_id)
-
     const githubCredential = await GithubCredential.findOne({
       where: { user_id: user.id, account_type: 'User' },
     })

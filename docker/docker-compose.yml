@@ -2,7 +2,7 @@ name: dyff
 
 services:
   dyff:
-    image: ${DYFF_IMAGE:-dyffs/dyff:latest}
+    image: dyffs/dyff:latest
     restart: unless-stopped
     env_file:
       - .env
@@ -15,10 +15,6 @@ services:
       DB_NAME: dyff
       REDIS_HOST: redis
       REDIS_PORT: 6379
-      SELF_HOST_ADMIN_EMAIL: ${SELF_HOST_ADMIN_EMAIL:-admin@dyff.local}
-      SELF_HOST_ADMIN_PASSWORD: ${SELF_HOST_ADMIN_PASSWORD:-changeme}
-      # JWT_SECRET and LLM_KEY_ENCRYPTION_SECRET come from the .env file
-      # (see .env.example).
     ports:
       - "${DYFF_PORT:-3000}:80"
     volumes:
