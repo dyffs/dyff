@@ -2,6 +2,7 @@ name: dyff
 
 services:
   dyff:
+    container_name: dyff-app
     image: dyffs/dyff:latest
     restart: unless-stopped
     env_file:
