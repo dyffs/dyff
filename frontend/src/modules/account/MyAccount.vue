@@ -42,9 +42,9 @@
         class="gap-2 rounded-lg"
       >
         <CardHeader>
-          <CardTitle class="flex items-center gap-2">
+          <CardTitle class="flex items-center gap-2 mb-2">
             <img
-              src="/assets/github-logo-black.svg"
+              :src="`/assets/github-logo-${colorMode === 'dark' ? 'white' : 'black'}.svg`"
               class="h-4 w-4"
             >
             <span>GitHub Connection</span>
@@ -74,10 +74,10 @@
           </CardDescription>
         </CardHeader>
         <CardContent class="space-y-4 text-sm">
-          <div class="flex items-center gap-2">
+          <div class="flex items-center gap-2 mt-2">
             <div
               class="h-2 w-2 rounded-full"
-              :class="isConnected ? 'bg-green-500' : 'bg-red-500'"
+              :class="isConnected ? 'bg-success' : 'bg-destructive'"
             />
             <span class="text-sm">
               {{ isConnected ? 'Connected via PAT' : 'Not connected' }}
@@ -109,7 +109,7 @@
                 <AlertDialogDescription class="text-primary">
                   <template v-if="disconnectScope === 'team'">
                     Your token is <span class="text-primary">shared with the team</span> for read access. Disconnecting
-                    will <span class="text-red-500">remove GitHub access for everyone</span> on the team — they will
+                    will <span class="text-destructive">remove GitHub access for everyone</span> on the team — they will
                     no longer be able to view PRs, comments, or repositories until
                     a new team token is connected.
                   </template>
@@ -169,9 +169,12 @@ import {
 } from '@/components/ui/alert-dialog'
 import { useAccount } from './useAccount'
 import { useGithubSetup } from '../github_setup/useGithubSetup'
+import { useColorMode } from '@vueuse/core'
 
 const { user, logout } = useAccount()!
 const { status, disconnect } = useGithubSetup()!
+
+const colorMode = useColorMode()
 
 const isLoading = shallowRef(false)
 const isDisconnecting = shallowRef(false)

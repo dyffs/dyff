@@ -1,7 +1,7 @@
 <template>
   <tr
     class="
-      group border-b border-border-80 transition-colors hover:bg-background-hover
+      group border-b border-border-subtle transition-colors hover:bg-background-hover
     "
     :class="[needsReview ? 'bg-amber-500/10' : '']"
   >
@@ -20,8 +20,8 @@
           :to="`/repositories/${pr.owner}/${pr.repo}/pulls/${pr.pr_number}`"
           class="text-primary text-sm font-medium hover:text-blue-700 dark:hover:text-blue-400"
         >
-          <span class="text-muted-foreground font-normal mr-2">#{{ pr.pr_number }}</span>
-          {{ pr.title }}
+          <span class="text-muted-foreground mr-2">#{{ pr.pr_number }}</span>
+          <span class="text-primary dark:text-white dark:font-semibold mr-2">{{ pr.title }}</span>
         </RouterLink>
         <span class="text-muted-foreground text-xs">{{ pr.branch }} → {{ pr.baseBranch }}</span>
       </div>

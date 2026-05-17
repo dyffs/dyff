@@ -12,7 +12,7 @@
   <div
     v-else-if="files.length > 0"
     ref="scrollContainerRef"
-    class="h-full overflow-y-auto bg-tertiary-foreground"
+    class="h-full overflow-y-auto bg-surface-3"
     @mouseup="onDiffMouseUp"
     @scroll.passive="onScrollHandler"
   >

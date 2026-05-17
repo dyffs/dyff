@@ -63,7 +63,7 @@
           :min-size="15"
           :max-size="50"
         >
-          <div class="h-full w-full border-l overflow-y-auto overflow-x-hidden p-4 bg-tertiary-foreground">
+          <div class="h-full w-full border-l overflow-y-auto overflow-x-hidden p-4 bg-surface-3">
             <Tabs
               v-model="sidebarTab"
               class="flex-1 h-full flex flex-col overflow-x-hidden overflow-y-auto gap-0 bg-white rounded-md border"

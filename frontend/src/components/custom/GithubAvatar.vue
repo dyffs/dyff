@@ -1,7 +1,7 @@
 <template>
   <Avatar
     v-if="style === 'circle'"
-    :class="cn('h-8 w-8', className)"
+    :class="cn('h-8 w-8 dark:ring ring-ring', className)"
   >
     <AvatarImage
       :src="avatarUrl ?? `https://github.com/${username}.png`"

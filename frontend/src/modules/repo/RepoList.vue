@@ -5,7 +5,7 @@
         Connect repositories
       </h1>
       <p class="text-sm text-muted-foreground">
-        Connect GitHub repos so your team can access them through this app.
+        Connect Repo to view their pull requests
       </p>
     </div>
 
@@ -44,7 +44,7 @@
             class-name="h-7 w-7"
           />
           <div class="flex-1 min-w-0">
-            <span class="text-sm font-medium hover:text-chart-2">
+            <span class="text-sm font-medium dark:font-bold">
               {{ repo.full_name }}
             </span>
             <div class="flex items-center gap-2 mt-0.5 text-xs text-muted-foreground">
@@ -61,7 +61,7 @@
               <Button
                 variant="ghost"
                 size="xs"
-                class="h-7 text-muted-2 hover:text-destructive"
+                class="h-7 text-surface-2 hover:text-destructive"
                 @click.stop.prevent
               >
                 Disconnect
@@ -158,7 +158,7 @@
                     class-name="h-7 w-7"
                   />
                   <div class="flex-1 min-w-0">
-                    <div class="text-sm font-medium">
+                    <div class="text-sm font-medium dark:font-bold">
                       {{ repo.full_name }}
                     </div>
                     <div class="text-xs text-muted-foreground">

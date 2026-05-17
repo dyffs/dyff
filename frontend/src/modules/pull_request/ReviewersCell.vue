@@ -10,7 +10,7 @@
     <div
       v-if="hiddenCount > 0"
       v-tooltip="{ content: hiddenUsernames, html: true }"
-      class="w-6 h-6 rounded-full dark:bg-zinc-800 border dark:border-zinc-700 border-border-80 flex items-center justify-center text-[11px] font-medium text-zinc-400 -ml-1 cursor-pointer"
+      class="w-6 h-6 rounded-full dark:bg-zinc-800 border dark:border-zinc-700 border-border-subtle flex items-center justify-center text-[11px] font-medium text-zinc-400 -ml-1 cursor-pointer"
     >
       +{{ hiddenCount }}
     </div>

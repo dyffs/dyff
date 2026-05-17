@@ -4,7 +4,9 @@
       <SidebarMenu>
         <SidebarMenuItem>
           <SidebarMenuButton>
-            <ShowerHead /><span>Dyff</span>
+            <div class="font-mono">
+              <span>dyff.sh</span>
+            </div>
           </SidebarMenuButton>
         </SidebarMenuItem>
       </SidebarMenu>
@@ -43,7 +45,7 @@
       </SidebarGroup>
     </SidebarContent>
     <SidebarFooter>
-      <ColorMode />
+      <AppSidebarFooter />
     </SidebarFooter>
     <SidebarRail />
   </Sidebar>
@@ -52,7 +54,7 @@
 import { computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { ShowerHead, HardDrive, Settings, Factory, Users } from 'lucide-vue-next'
-import ColorMode from './ColorMode.vue'
+import AppSidebarFooter from './AppSidebarFooter.vue'
 import TrackedReposSidebar from './repo/TrackedReposSidebar.vue'
 import {
   Sidebar,

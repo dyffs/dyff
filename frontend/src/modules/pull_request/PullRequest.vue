@@ -2,7 +2,10 @@
   <div class="flex flex-col w-6xl xl:w-7xl mx-auto flex-1 overflow-y-auto mb-4">
     <!-- Header -->
     <div class="w-full mb-6 flex items-center gap-2">
-      <GithubAvatar :username="(route.params.owner as string)" />
+      <GithubAvatar
+        class="ml-0.5"
+        :username="(route.params.owner as string)"
+      />
       <div class="flex flex-col">
         <h1 class="text-xl font-semibold text-foreground">
           Pull Requests

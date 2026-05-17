@@ -161,6 +161,7 @@
           </AlertDialogCancel>
           <AlertDialogAction
             :disabled="isDeleting"
+            class="bg-destructive text-destructive-foreground hover:bg-destructive/90"
             @click="handleDelete"
           >
             {{ isDeleting ? 'Deleting…' : 'Delete' }}
